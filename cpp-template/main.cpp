@@ -94,6 +94,21 @@ struct st_foo
 // log宏：多模板参数expr需要在外部使用括号把表达式括起来
 #define LOG(expr) std::cout << #expr << " = " << expr << std::endl
 
+class Empty {
+    using Int = int;// type alias members don’ t make a class nonempty
+};
+class EmptyToo : public Empty {
+};
+class EmptyThree : public EmptyToo {
+};
+
+void test_ebco()
+{
+    LOG(sizeof(Empty));
+    LOG(sizeof(EmptyToo));
+    LOG(sizeof(EmptyThree));
+}
+
 int main(int argc, char** argv)
 {
     {
