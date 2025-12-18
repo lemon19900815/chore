@@ -33,7 +33,10 @@ $ git submodule update
 
 # 工程中添加子模块
 $ cd submodule
-$ git submodule add repo-url
+$ git submodule add -b <branch-name> <repo-url> <path>
+
+# e.g.
+$ git submodule add [-b dev] http://url/zlib.git [zlib]
 
 # 操作完成后，可以看到submodule下已经添加了子模块以及.gitmodules(上一级目录下)
 
