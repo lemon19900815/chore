@@ -34,7 +34,7 @@ readelf -a your_program|your_lib | grep -i path
 apt install chrpath
 
 # 使用chrpath修改RUNPATH：修改程序的动态库搜索目录（相当于把当前目录加入到程序运行时库的搜索目录中）
-chrpath -r "$ORIGIN" your_program
+chrpath -r '$ORIGIN' your_program
 ```
 
 ## 3. 动态库链接规则（顺序）
