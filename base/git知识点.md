@@ -232,3 +232,12 @@ $ git checkout branch_name
 $ git checkout -b branch_name
 ```
 
+## 8. TortoiseGit设置ssh密钥
+
+```sh
+# 生成ssh密钥
+ssh-keygen -t rsa123 -b 4096 -C "user@github.com"
+
+# 把生成的**公钥**添加到gitlab的SSH Keys管理页面
+```
+
