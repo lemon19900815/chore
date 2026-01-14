@@ -202,6 +202,20 @@ mysql -uroot -p123456 --max_allowed_packet=512M --default-character-set=utf8 des
 
 
 
+### 1.5 自动更新操作时间
+
+```mysql
+CREATE TABLE your_table (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+在navicat工具中设置如下：
+
+![](./img/mysql-auto-update-time.png)
+
 
 
 ## 2. mysql优化建议（技巧）
@@ -258,3 +272,10 @@ mysql -uroot -p123456 --max_allowed_packet=512M --default-character-set=utf8 des
 - **控制字段数量**：避免创建过多不必要的字段，过多的字段会增加表的复杂度和存储开销，同时也会影响查询性能。可以将一些不常用的字段单独存储在其他表中，通过关联查询获取数据。
 - **反范式化设计**：可以适当引入一些数据冗余，将相关联的数据存储在同一个表中，减少表之间的关联查询。需要在范式化和反范式化之间找到一个平衡点。
 - **合理创建索引**：在经常用于 `WHERE` 子句、`JOIN` 子句和 `ORDER BY` 子句的字段上创建索引，以提高查询效率。避免在重复值较多的字段上创建索引，因为这样的索引效果不佳。例如，在一个性别字段上创建索引可能没有太大意义。当然，过多的索引会增加存储开销和写操作的性能开销，因此要根据实际查询需求合理创建索引，避免创建过多不必要的索引。
+
+
+
+## 3. 5.7->8.4
+
+https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html
+

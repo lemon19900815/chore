@@ -74,17 +74,17 @@
 4. 使用`FlameGraph`工具链处理数据：
 
    ```sh
-# 折叠调用栈（统计相同路径）
-   stackcollapse-perf.pl < output.perf > output.folded
-# 生成svg火焰图
-   flamegraph.pl output.folded > flamegraph.svg
+   // 折叠调用栈（统计相同路径）
+	stackcollapse-perf.pl < output.perf > output.folded
    
-   # 命令简化，一步完成
+	// 生成svg火焰图
+   flamegraph.pl output.folded > flamegraph.svg
+
+   // 命令简化，一步完成
    perf script | stackcollapse-perf.pl | flamegraph.pl > flamegraph.svg
    ```
-   
-   
-   
+
+
 
 ## Ⅱ. Windows下在visual studio工具使用性能分析工具
 
@@ -117,3 +117,5 @@
    ![](./img/profiler-fire-flop.png)
 
 5. 基于以上信息，我们可以分析热点函数，对程序做针对性的优化。
+   
+

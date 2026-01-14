@@ -76,6 +76,16 @@ $ git pull
 
 然后，当您执行a时`git status`，应该会看到`lib/somelib`修改部分中列出的内容。添加该文件，提交，您就是最新的。当协作者将该提交提交到他们的存储库中时，他们将被`lib/somelib`视为已修改，直到`git submodule update`再次运行。
 
+**初始化&更新子模块：**
+
+```sh
+$ git submodule update --init --recursive --remote
+```
+
+- `--init`：这个选项会初始化子模块，即如果子模块尚未被克隆到本地，它会自动克隆这些子模块。
+- `--recursive`：这个选项会递归地更新所有嵌套的子模块。如果你的子模块中还有其他子模块，使用这个选项可以确保所有层级的子模块都得到更新。
+- `--remote`：这个选项使得 Git 从子模块的远程仓库获取更新，而不是使用当前 `HEAD` 所指向的提交。具体来说，它将更新每个子模块到其配置的远程跟踪分支的最新提交，例如 `master` 或 `main`。
+
 ## 3. git rebase
 
 reference： [参考连接](https://blog.csdn.net/qq_39253370/article/details/124277214?d=1676020974837)
