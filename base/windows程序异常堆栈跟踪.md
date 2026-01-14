@@ -1,8 +1,8 @@
 - windows程序异常堆栈跟踪
 
-  - [1. 启动程序时设置dump机制](#1. 启动程序时设置dump机制)
-  - [2. 利用WER生成dump文件](#2. 利用WER生成dump文件)
-  - [3. 使用gflags全局定位问题](#3. 使用gflags全局定位问题)
+  - [1. 启动程序时设置dump机制](#1.启动程序时设置dump机制)
+  - [2. 利用WER生成dump文件](#2.利用WER生成dump文件)
+  - [3. 使用gflags全局定位问题](#3.使用gflags全局定位问题)
   - [4.总结](#4.总结)
   - [5.扩展](#5.扩展)
   
@@ -10,7 +10,7 @@
 
 # windows程序异常堆栈跟踪
 
-## 1. 启动程序时设置dump机制
+## 1.启动程序时设置dump机制
 
 ```c++
 #include <Windows.h>
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
 
 
 
-## 2. 利用WER生成dump文件
+## 2.利用WER生成dump文件
 
 参考：https://blog.csdn.net/lele604413545/article/details/72518140
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 
 
 
-## 3. 使用gflags全局定位问题
+## 3.使用gflags全局定位问题
 
 注意：这个不是google的gflags库，而是微软的gobal flags系统工具。
 
