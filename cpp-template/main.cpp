@@ -10,148 +10,120 @@ using namespace std::chrono_literals;
 using namespace meta;
 
 #include <utility>
-
-// helper: checking validity of f (args...) for F f and Args... args:
-template<typename F, typename... Args,
-    typename = decltype(std::declval<F>() (std::declval<Args&&>()...))>
-std::true_type isValidImpl(void*);
-
-// fallback if helper SFINAE’ d out:
-template<typename F, typename... Args>
-std::false_type isValidImpl(...);
-
-// define a lambda that takes a lambda f and returns whether calling f with args is valid
-inline constexpr auto isValid = [](auto f) {
-    return [](auto&& ... args) {
-        return decltype(isValidImpl<decltype(f),
-            decltype(args) && ...>(nullptr)){};
-        };
-    };
-
-// helper template to represent a type as a value
-template<typename T>
-struct TypeT {
-    using Type = T;
-};
-
-// helper to wrap a type as a value
-template<typename T>
-constexpr auto type = TypeT<T>{};
-
-// helper to unwrap a wrapped type in unevaluated contexts
-template<typename T>
-T valueT(TypeT<T>); // no definition needed
-
-// primary template: yield the second argument by default and rely on
-// a partial specialization to yield the third argument
-// if Cond is false
-template<bool Cond, typename TrueType, typename FalseType>
-struct IfThenElseT {
-    using Type = TrueType;
-};
-
-// partial specialization: false yields third argument
-template<typename TrueType, typename FalseType>
-struct IfThenElseT<false, TrueType, FalseType> {
-    using Type = FalseType;
-};
-
-template<bool Cond, typename TrueType, typename FalseType>
-using IfThenElse = typename IfThenElseT<Cond, TrueType,
-    FalseType>::Type;
-
-// yield T when using member Type:
-template<typename T>
-struct IdentityT {
-    using Type = T;
-};
-
-// to make unsigned after IfThenElse was evaluated:
-template<typename T>
-struct MakeUnsignedT {
-    using Type = typename std::make_unsigned<T>::type;
-};
-
-//template<typename T>
-//struct UnsignedT {
-//    using Type = IfThenElse<std::is_integral<T>::value
-//        && !std::is_same<T, bool>::value, typename std::make_unsigned<T>::type,
-//        T>;
-//};
-
-template<typename T>
-struct UnsignedT {
-    using Type = typename IfThenElse<std::is_integral<T>::value && !std::is_same<T, bool>::value,
-        MakeUnsignedT<T>,
-        IdentityT<T>>::Type;
-};
-
-struct st_foo
-{
-    void foo() {}
-};
+#include <variant>
 
 // log宏：多模板参数expr需要在外部使用括号把表达式括起来
-#define LOG(expr) std::cout << #expr << " = " << expr << std::endl
+#define LOG(expr) std::cout << __FUNCTION__ << ": " << #expr << " = " << expr << std::endl
+#define LOG_LINE() std::cout << "===========================================================\n"
 
-class Empty {
-    using Int = int;// type alias members don’ t make a class nonempty
-};
-class EmptyToo : public Empty {
-};
-class EmptyThree : public EmptyToo {
-};
+// test basic meta skills.
+void test_basic();
+
+// test empty base class optimization.
+void test_ebco();
+
+// test foreach tuple elements.
+void test_for_tuple();
+
+// test function traits.
+void test_function_traits();
+
+// test struct/class has member field or member function.
+void test_has_field_or_func();
+
+// test nothrow constructiable trait.
+void test_nothrow_contructiable() noexcept;
+
+// test std variant, vist.
+void test_variant();
+
+// test my variant implementation.
+void test_my_variant();
+
+int main(int argc, char** argv)
+{
+    // test basic meta skills.
+    test_basic();
+
+    // test empty base class optimization.
+    test_ebco();
+
+    // test foreach tuple elements.
+    test_for_tuple();
+
+    // test function traits.
+    test_function_traits();
+
+    // test struct/class has member field or member function.
+    test_has_field_or_func();
+
+    // test nothrow constructiable trait.
+    test_nothrow_contructiable();
+
+    // test std variant, vist.
+    test_variant();
+
+    // test my variant implementation.
+    test_my_variant();
+
+#ifdef _WIN32
+    system("pause");
+#endif
+
+    return 0;
+}
 
 void test_ebco()
 {
+    LOG_LINE();
+
+    class Empty {
+        using Int = int;// type alias members don’ t make a class nonempty
+    };
+    class EmptyToo : public Empty {
+    };
+    class EmptyThree : public EmptyToo {
+    };
+
     LOG(sizeof(Empty));
     LOG(sizeof(EmptyToo));
     LOG(sizeof(EmptyThree));
 }
 
-int main(int argc, char** argv)
+HAS_MEMBER_FUNCTION(print);
+HAS_MEMBER_FIELD(x);
+HAS_MEMBER_FIELD(y);
+
+void test_has_field_or_func()
 {
+    LOG_LINE();
+
+    struct test {
+        void print() {}
+        void print(int v) {}
+
+        int x;
+
+    private:
+        int y;
+    };
+
+    struct st_foo
+    {
+        void foo() {}
+    };
+
+    constexpr auto has_print_void = Hasprint<test>; // true
+    constexpr auto has_print_int = Hasprint<test, int>; // true
+    constexpr auto has_print_str = Hasprint<test, std::string>; // false
+
+    constexpr auto has_x = Hasx<test>; // true
+    constexpr auto has_y = Hasy<test>; // false, private member.
+
     {
         // test has_mem_func
         LOG(has_mem_func<int>::value);
         LOG(has_mem_func<st_foo>::value);
-    }
-
-    {
-        struct test
-        {
-            test(test&&) = delete;
-        };
-
-        struct test2
-        {
-            test2(test2&&) { }
-        };
-
-        struct test3
-        {
-            test3(test3&&) noexcept { }
-        };
-
-        // test IsNothrowMoveContructibleT
-        LOG(IsNothrowMoveContructibleT<test>::value);
-        LOG(IsNothrowMoveContructibleT<test2>::value);
-        LOG(IsNothrowMoveContructibleT<test3>::value);
-    }
-
-    {
-        // c++17：实现任意成员的探测
-        constexpr auto hasFirst = isValid([](auto x) ->
-            decltype((void)valueT(x).first) {});
-
-        LOG(hasFirst(type<int>));
-        LOG(hasFirst(type<std::pair<int, int>>));
-    }
-
-    {
-        // test meta add.
-        // 多模板参数需要使用quote符号把表达式括起来
-        LOG((add<1,2>::value));
     }
 
     {
@@ -164,19 +136,117 @@ int main(int argc, char** argv)
         LOG(call_func("lemon"s));
     }
 
-    {
-        // test for each on tuple.
-        auto str = "1"s;
-        auto xx = 1s;
+    // c++17：实现任意成员的探测
+    constexpr auto hasFirst = isValid([](auto x) ->
+        decltype((void)valueT(x).first) {});
 
-        auto tp = std::make_tuple(1, 2, "lemon");
-        constexpr auto SIZE = std::tuple_size_v<decltype(tp)>;
+    LOG(hasFirst(type<int>));
+    LOG(hasFirst(type<std::pair<int, int>>));
+}
 
-        // 遍历tuple
-        for_each(tp, std::make_index_sequence<SIZE>{}, [](auto& item, auto idx) {
-            std::cout << "idx = " << idx << ", value = " << item << std::endl;
-        });
-    }
+void test_variant()
+{
+    LOG_LINE();
+
+    std::unordered_map<int32_t, std::string> map_str;
+    std::vector<std::string> vec_str;
+
+    LOG(TypeNameOf(map_str));
+    LOG(TypeNameOf(vec_str));
+
+    std::variant<decltype(map_str), decltype(vec_str)> var = map_str;
+
+    std::visit([](auto&& r) {
+        if constexpr (std::is_same_v<std::decay_t<decltype(r)>, std::unordered_map<int32_t, std::string>>) {
+            std::cout << "test_variant: unordered_map constexpr " << std::endl;
+        } else if constexpr (std::is_same_v<std::decay_t<decltype(r)>, std::vector<std::string>>) {
+            std::cout << "test_variant: vector  constexpr" << std::endl;
+        }
+    }, var);
+
+    // use Overload to visit variant. like my_variant.Visit(...)
+    std::visit(Overload{ [](std::unordered_map<int32_t, std::string>& v) {
+        std::cout << "test_variant: unordered_map Overload" << std::endl;
+    }, [](std::vector<std::string>& v) {
+        std::cout << "test_variant: vector Overload" << std::endl;
+    } }, var);
+}
+
+void test_my_variant()
+{
+    LOG_LINE();
+
+    struct MyTest {
+        int a;
+        int b;
+        int c;
+    };
+
+    meta::Variant<int, double, char, int64_t> v(1);
+    LOG(v.Type().name());
+
+    v = 20ll;
+    LOG(v.Type().name());
+
+    v = 3.14;
+    LOG(v.Type().name());
+
+    v = 'a';
+    LOG(v.Type().name());
+
+    v.Visit([](int v) {
+        std::cout << "test_my_variant: int: " << v << std::endl;
+    }, [](double v) {
+        std::cout << "test_my_variant: double: " << v << std::endl;
+    }, [](char v) {
+         std::cout << "test_my_variant: char: " << v << std::endl;
+    }, [](int64_t v) {
+        std::cout << "test_my_variant: int64_t: " << v << std::endl;
+    });
+
+    LOG(v.IndexOf<double>());
+}
+
+void test_function_traits()
+{
+    LOG_LINE();
+
+    std::function<int(int)> f = [](int a) { return a; };
+    auto f2 = [](int a) { return a; };
+    print_type<function_traits<int(int)>::fn_type>("function_traits<int(int)>::fn_type = ");
+    print_type<function_traits<int(int)>::args<0>::type>("function_traits<int(int)>::args<0>::type = ");
+    print_type<function_traits<decltype(f)>::fn_type>("function_traits<decltype(f)>::fn_type = ");
+    print_type<function_traits<decltype(f2)>::fn_type>("function_traits<decltype(f2)>::fn_type = ");
+
+    struct MyTest {
+        int operator()() { return 1; }
+        void foo(int) {}
+    };
+
+    print_type<function_traits<decltype(&MyTest::foo)>::fn_type>("function_traits<decltype(&MyTest::foo) = ");
+    print_type<function_traits<MyTest>::fn_type>("function_traits<decltype(MyTest) = ");
+}
+
+void test_for_tuple()
+{
+    LOG_LINE();
+
+    // test for each on tuple.
+    auto str = "1"s;
+    auto xx = 1s;
+
+    auto tp = std::make_tuple(1, 2, "lemon");
+    constexpr auto SIZE = std::tuple_size_v<decltype(tp)>;
+
+    // 遍历tuple
+    for_each(tp, std::make_index_sequence<SIZE>{}, [](auto& item, auto idx) {
+        std::cout << "test_for_tuple: idx = " << idx << ", value = " << item << std::endl;
+    });
+}
+
+void test_basic()
+{
+    LOG_LINE();
 
     {
         LOG((IntMax_v<sizeof(int), sizeof(char*), sizeof(double), sizeof(int64_t)>));
@@ -205,6 +275,12 @@ int main(int argc, char** argv)
     }
 
     {
+        // test meta add.
+        // 多模板参数需要使用quote符号把表达式括起来
+        LOG((add<1, 2>::value));
+    }
+
+    {
         // use initializer_list and () expand param list.
         print_for_each<int, double, char, int64_t>();
     }
@@ -212,59 +288,29 @@ int main(int argc, char** argv)
     {
         print_args(1, 3.14, 20L, 30LL);
     }
+}
 
+void test_nothrow_contructiable() noexcept
+{
+    LOG_LINE();
+
+    struct test
     {
-        std::function<int(int)> f = [](int a) {return a; };
-        auto f2 = [](int a) {return a; };
-        print_type<function_traits<int(int)>::fn_type>("function_traits<int(int)>::fn_type = ");
-        print_type<function_traits<int(int)>::args<0>::type>("function_traits<int(int)>::args<0>::type = ");
-        print_type<function_traits<decltype(f)>::fn_type>("function_traits<decltype(f)>::fn_type = ");
-        print_type<function_traits<decltype(f2)>::fn_type>("function_traits<decltype(f2)>::fn_type = ");
+        test(test&&) = delete;
+    };
 
-        struct MyTest {
-            int operator()() { return 1; }
-            void foo(int ) { }
-        };
-
-        print_type<function_traits<decltype(&MyTest::foo)>::fn_type>("function_traits<decltype(&MyTest::foo) = ");
-        print_type<function_traits<MyTest>::fn_type>("function_traits<decltype(MyTest) = ");
-    }
-
+    struct test2
     {
-        struct MyTest {
-            int a;
-            int b;
-            int c;
-        };
+        test2(test2&&) {}
+    };
 
-        meta::Variant<int, double, char, int64_t> v(1);
-        LOG(v.Type().name());
+    struct test3
+    {
+        test3(test3&&) noexcept {}
+    };
 
-        v = 20ll;
-        LOG(v.Type().name());
-
-        v = 3.14;
-        LOG(v.Type().name());
-
-        v = 'a';
-        LOG(v.Type().name());
-
-        v.Visit([](int v) {
-            std::cout << "int: " << v << std::endl;
-        }, [](double v) {
-            std::cout << "double: " << v << std::endl;
-        }, [](char v) {
-            std::cout << "char: " << v << std::endl;
-        }, [](int64_t v) {
-            std::cout << "int64_t: " << v << std::endl;
-        });
-
-        LOG(v.IndexOf<double>());
-    }
-
-#ifdef _WIN32
-    system("pause");
-#endif
-
-    return 0;
+    // test IsNothrowMoveContructibleT
+    LOG(IsNothrowMoveContructibleT<test>::value);
+    LOG(IsNothrowMoveContructibleT<test2>::value);
+    LOG(IsNothrowMoveContructibleT<test3>::value);
 }

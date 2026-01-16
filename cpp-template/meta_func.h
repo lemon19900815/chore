@@ -6,6 +6,7 @@
 #include <iostream>
 #include <tuple>
 #include <functional>
+#include <string_view>
 
 // reference: https://www.cnblogs.com/qicosmos/p/4480460.html
 
@@ -57,6 +58,50 @@ struct has_mem_func : std::false_type { };
 // partial specialization (may be SFINAE’ d away):
 template<typename T>
 struct has_mem_func<T, std::void_t<decltype(std::declval<T>().foo())>> : std::true_type { };
+
+// test sturct/class has member field or not.
+#define HAS_MEMBER_FIELD(FieldName)                                                          \
+    template<typename T, typename = std::void_t<>>                                           \
+    struct has_##FieldName##_impl : std::false_type { };                                     \
+    template<typename T>                                                                     \
+    struct has_##FieldName##_impl<T, std::void_t<decltype(std::declval<T>().FieldName)>>     \
+        : std::true_type { };                                                                \
+    template<typename T>                                                                     \
+    constexpr bool Has##FieldName = has_##FieldName##_impl<T>::value;                        \
+
+// test struct/class has member function or not.
+#define HAS_MEMBER_FUNCTION(FuncName)                                                        \
+    template<typename T, typename A, typename = std::void_t<>>                               \
+    struct has_##FuncName##_impl : std::false_type { };                                      \
+    template<typename T, typename... Args>                                                   \
+    struct has_##FuncName##_impl<T, std::tuple<Args...>,                                     \
+        std::void_t<decltype(std::declval<T>().FuncName(std::declval<Args>()...))>>          \
+        : std::true_type { };                                                                \
+    template<typename T, typename... Args>                                                   \
+    constexpr bool Has##FuncName = has_##FuncName##_impl<T, std::tuple<Args...>>::value;     \
+
+/*
+struct test {
+    void print() { }
+    void print(int v) { }
+
+    int x;
+
+private:
+    int y;
+};
+
+HAS_MEMBER_FUNCTION(print);
+HAS_MEMBER_FIELD(x);
+HAS_MEMBER_FIELD(y);
+
+constexpr auto has_print_void = Hasprint<test>; // true
+constexpr auto has_print_int = Hasprint<test, int>; // true
+constexpr auto has_print_str = Hasprint<test, std::string>; // false
+
+constexpr auto has_x = Hasx<test>; // true
+constexpr auto has_y = Hasy<test>; // false, private member.
+*/
 
 template<typename T>
 struct IsDefaultConstructibleT {
@@ -481,6 +526,122 @@ private:
 private:
     data_type data_;
     std::type_index type_idx_{ typeid(void) }; // 类型id
+};
+
+template<typename... T>
+struct Overload : T...
+{
+    using T::operator()...;
+};
+
+template<typename... T>
+Overload(T &&...) -> Overload<T...>;
+
+template<typename T>
+constexpr auto TypeNameOf()
+{
+    using namespace std::string_view_literals;
+
+#ifdef __GNUC__
+    std::string_view name = __PRETTY_FUNCTION__;
+#ifdef __clang__
+    constexpr auto prefix = "auto TypeNameOf() [T = "sv;
+#else
+    constexpr auto prefix = "constexpr auto TypeNameOf() [with T = "sv;
+#endif
+    constexpr auto suffix = "]"sv;
+#endif
+
+#ifdef _MSC_VER
+    std::string_view name = __FUNCSIG__;
+    constexpr auto prefix = "auto __cdecl TypeNameOf<class "sv;
+    constexpr auto suffix = ">(void)"sv;
+#endif
+
+    name.remove_prefix(prefix.size());
+    name.remove_suffix(suffix.size());
+    return name;
+}
+
+template<typename T>
+constexpr auto TypeNameOf(T&&)
+{
+    return TypeNameOf<std::remove_cv_t<T>>();
+}
+
+// helper: checking validity of f (args...) for F f and Args... args:
+template<typename F, typename... Args,
+    typename = decltype(std::declval<F>() (std::declval<Args&&>()...))>
+std::true_type isValidImpl(void*);
+
+// fallback if helper SFINAE’ d out:
+template<typename F, typename... Args>
+std::false_type isValidImpl(...);
+
+// define a lambda that takes a lambda f and returns whether calling f with args is valid
+inline constexpr auto isValid = [](auto f) {
+    return [](auto&& ... args) {
+        return decltype(isValidImpl<decltype(f),
+            decltype(args) && ...>(nullptr)){};
+        };
+    };
+
+// helper template to represent a type as a value
+template<typename T>
+struct TypeT {
+    using Type = T;
+};
+
+// helper to wrap a type as a value
+template<typename T>
+constexpr auto type = TypeT<T>{};
+
+// helper to unwrap a wrapped type in unevaluated contexts
+template<typename T>
+T valueT(TypeT<T>); // no definition needed
+
+// primary template: yield the second argument by default and rely on
+// a partial specialization to yield the third argument
+// if Cond is false
+template<bool Cond, typename TrueType, typename FalseType>
+struct IfThenElseT {
+    using Type = TrueType;
+};
+
+// partial specialization: false yields third argument
+template<typename TrueType, typename FalseType>
+struct IfThenElseT<false, TrueType, FalseType> {
+    using Type = FalseType;
+};
+
+template<bool Cond, typename TrueType, typename FalseType>
+using IfThenElse = typename IfThenElseT<Cond, TrueType,
+    FalseType>::Type;
+
+// yield T when using member Type:
+template<typename T>
+struct IdentityT {
+    using Type = T;
+};
+
+// to make unsigned after IfThenElse was evaluated:
+template<typename T>
+struct MakeUnsignedT {
+    using Type = typename std::make_unsigned<T>::type;
+};
+
+//template<typename T>
+//struct UnsignedT {
+//    using Type = IfThenElse<std::is_integral<T>::value
+//        && !std::is_same<T, bool>::value, typename std::make_unsigned<T>::type,
+//        T>;
+//};
+
+template<typename T>
+struct UnsignedT {
+    using Type = typename IfThenElse<std::is_integral<T>::value && !std::is_same<T, bool>::value,
+        MakeUnsignedT<T>,
+        IdentityT<T>>::Type;
 };
 
 } // namespace meta
