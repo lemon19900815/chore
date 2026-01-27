@@ -189,14 +189,31 @@ mysql -uroot -p123456 --max_allowed_packet=512M --default-character-set=utf8 des
 
   默认情况下，MySQL 用户只允许从本地（`localhost`）连接。你需要为需要外部访问的用户授予权限。
 
-  假设你的用户名是 `user`，密码是 `password`，并且你希望从任何主机连接：
+  假设你的用户名是 `test`，密码是 `123456`，并且你希望从任何主机连接：
 
   ```sh
-  // ip: e.g. 192.168.1.100
-  //    		%-所有ip均可访问
-  GRANT ALL PRIVILEGES ON *.* TO 'user'@'ip' IDENTIFIED BY 'password';
+  // %: 所有ip均可访问
+  CREATE USER 'test'@'%' IDENTIFIED BY '123456';
+  GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
   FLUSH PRIVILEGES;
   ```
+
+- 直接修改系统表
+
+  - 修改user表的host信息为%：
+
+  ![](./img/user-host.png)
+
+  - 修改global_grants的host为%：
+
+    ![](./img/global_grants_host.png)
+
+    **注意：**
+
+    1. 修改这2项信息之后，重启mysql服务；
+    2. windows下运行命令行工具`mysql -uroot -p`需要在cmd下；
+
+    
 
 - 
 
