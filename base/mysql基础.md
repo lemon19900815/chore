@@ -292,7 +292,136 @@ CREATE TABLE your_table (
 
 
 
-## 3. 5.7->8.4
+## 3. 版本升级 5.7->8.4
 
 https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html
+
+以下是升级过程中的注意事项：
+
+- 5.7的sql脚本是gbk（gb2312）编码的，在bat脚本中能够正常识别，但8.4中需要把sql文件转换为utf8编码，并且在bat脚本中加入以下内容，让bat支持utf8
+
+  ```bat
+  @echo off
+  
+  // 新增内容，用以在bat中支持utf8编码
+  chcp 65001 > nul
+  setlocal enabledelayedexpansion
+  
+  set host=127.0.0.1
+  set user=root
+  set psw=xxx
+  set name=test
+  set sqlpath=%~dp0
+  set sqlfile=update.sql
+  cd /d C:\Program Files\MySQL\MySQL Server 8.4\bin
+  
+  mysql -h%host% -u%user% -p%ps% %name%< %sqlpath%%sqlfile%
+  pause
+  ```
+
+  - MySQL 5.7 默认使用 latin1 或 utf8，对编码检查较宽松；
+  - MySQL 8.0+ 默认使用 utf8mb4，且对非法字符检查更严格；
+
+  
+
+- 8.4 不再支持`table_name.field`方式对字段进行修改：
+
+  ```sql
+  // 错误，字段前不能在带表名
+  ALTER TABLE tb_sample MODIFY tb_sample.`Range` VARCHAR(256) DEFAULT NULL COMMENT '参考范围';
+  ```
+
+  
+
+- 5.7备份数据导入8.4很慢问题
+
+  - 二进制日志（binlog）开了：开启 binlog 时，每个事务的修改都要写入 binlog，会增加磁盘 IO。若导入是很多小事务或大量单行 INSERT，binlog 写入开销会非常明显，尤其是 binlog_format=ROW（记录整行数据）时更大。
+  - 事务粒度小 / autocommit=ON：mysqldump 导出的 SQL 若产生大量独立事务（每条 INSERT 都提交），会触发多次 fsync/写入，慢得很。
+  - 索引和外键约束：导入时如果有大量索引/外键检查，会导致每条插入都做额外开销。
+  - 字符集转换：5.7 默认是 utf8（3 字节），8.x 常用 utf8mb4（4 字节）。导入时 MySQL 可能做字符集转换，增加 CPU 与内存负担（通常不是主要瓶颈，但会有影响）。
+  - 写入参数/刷盘策略：innodb_flush_log_at_trx_commit、sync_binlog 等默认设置追求 Durability，会频繁刷盘，影响吞吐。
+  - 导入方式单线程：mysqldump + mysql client 是单线程写入，面对大数据量本身有限。
+
+  
+
+  windows下执行导入命令：
+
+  ```bat
+  "C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe" -uroot -pPassword --max_allowed_packet=512M --default-character-set=utf8 --init-command="SET GLOBAL sync_binlog=0;SET GLOBAL innodb_flush_log_at_trx_commit=2;" dbname < backup.sql
+  ```
+
+  数据导入之后重启MySQL服务（对于普通用户来说，直接重启电脑）
+
+  
+
+  参数说明：`my.ini`
+
+  ```ini
+  // If set to 1, InnoDB will flush (fsync) the transaction logs to the
+  // disk at each commit, which offers full ACID behavior. If you are
+  // willing to compromise this safety, and you are running small
+  // transactions, you may set this to 0 or 2 to reduce disk I/O to the
+  // logs. Value 0 means that the log is only written to the log file and
+  // the log file flushed to disk approximately once per second. Value 2
+  // means the log is written to the log file at each commit, but the log
+  // file is only flushed to disk approximately once per second.
+  innodb_flush_log_at_trx_commit=1
+  
+  // 控制MySQL服务器何时将二进制日志（binlog）刷新到磁盘：每N个事务fsync一次，N=0依赖OS刷新，不主动fsync
+  sync_binlog=1
+  ```
+
+  显示mysql的某些变量值：`SHOW VARIABLES LIKE '%var%'`（e.g. `show variables like '%sync_binlog%'`）
+
+- 如果表的字段为blob，在navicat中查看到的数据长度就是不准确的；
+
+
+
+## 4. mysql核心配置
+
+- sync_binlog&innodb_flush_log_at_trx_commit
+
+  ```ini
+  # 场景1：电商核心交易
+  sync_binlog = 1
+  innodb_flush_log_at_trx_commit = 1
+  # 解释：不能丢失任何交易数据
+  
+  # 场景2：社交网站
+  sync_binlog = 1000
+  innodb_flush_log_at_trx_commit = 2
+  # 解释：可容忍少量数据丢失，追求高性能
+  
+  # 场景3：日志分析系统
+  sync_binlog = 0
+  innodb_flush_log_at_trx_commit = 0
+  # 解释：数据可重建，追求最大吞吐量
+  
+  # 场景4：主从复制中的从库
+  sync_binlog = 100
+  innodb_flush_log_at_trx_commit = 2
+  # 解释：从库可接受一定延迟
+  ```
+
+  
+
+- 开启binlog（CDC）
+
+  ```ini
+  # binlog 格式（CDC 必须）
+  binlog_format=ROW
+  
+  # 每条行变更都记录前后值（推荐）
+  binlog_row_image=FULL
+  
+  # 建议：开启 GTID（强烈推荐）
+  gtid_mode=ON
+  enforce_gtid_consistency=ON
+  ```
+
+  
+
+- 
+
+
 
