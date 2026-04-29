@@ -191,3 +191,67 @@ MQTT 的通配符是其强大功能之一，要善加利用。
    (井号)：多层通配符，必须放在 Topic 的末尾，可以匹配任意数量的后续层级。例如 `dt/sensor/#` 可以匹配上面两个例子以及 `dt/sensor/temp-001/extra/report`。
 
 通过通配符，运维人员或后端服务可以非常灵活地订阅他们关心的消息流，而无需为每个设备单独配置。
+
+
+
+## 6. 开启ssl连接
+
+使用脚本生成证书：`./证书/gen_certs.bat`
+
+mosquitto.conf配置中新增：
+
+```
+# TLS 监听端口
+listener 8883 0.0.0.0
+
+# CA 证书（用来验证客户端）
+#cafile D:/MACCURA/5002/mosquitto/ca.crt
+
+# 服务器证书
+certfile D:/MACCURA/5002/mosquitto/server.crt
+
+# 服务器私钥
+keyfile D:/MACCURA/5002/mosquitto/server.key
+
+# 不验证客户端证书
+require_certificate false
+```
+
+使用`paho.mqtt.c`通过ssl连接mosquitto：
+
+```c++
+MQTTAsync client;
+MQTTAsync_createOptions create_opts = MQTTAsync_createOptions_initializer5;
+create_opts.MQTTVersion = MQTTVERSION_5;
+create_opts.sendWhileDisconnected = 0;
+
+auto startWith = [](const std::string& str, const std::string& pattern) {
+    return str.find(pattern) == 0u;
+};
+
+// 是否开启ssl连接(如果不开启ssl则不要使用ssl://前缀)
+auto host = "ssl://127.0.0.1";
+auto port = 8883; // 默认非ssl端口为：1883
+auto id = "unique_id";
+
+bool is_ssl = startWith(m_connectOpt.host, "ssl://");
+
+auto uri = fmt::format("{}:{}", host, port);
+
+int rc;
+if ((rc = MQTTAsync_createWithOptions(&client, uri.c_str(), id, MQTTCLIENT_PERSISTENCE_NONE, NULL, &create_opts)) != MQTTASYNC_SUCCESS)
+{
+    return 1; // failed.
+}
+
+MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer5;
+// conn_opts参数设置
+...
+
+MQTTAsync_SSLOptions ssl_opts = MQTTAsync_SSLOptions_initializer;
+ssl_opts.enableServerCertAuth = 0; // 跳过主机名验证
+
+// 开启tls
+conn_opts.ssl = &ssl_opts;
+```
+
