@@ -15,6 +15,10 @@ graph TD;
 
 ### 2. 序列图 (Sequence Diagram)
 
+- `->>+` ：发送消息，并**激活接收者**（在接收者生命线上显示激活框）。
+- `->>-` ：发送消息，并**停用发送者**（关闭发送者的激活框）。
+- 同理，`-->>+` 和 `-->>-` 用于虚线消息。
+
 ```mermaid
 sequenceDiagram;
     Alice->>+John: 你好，John！
@@ -26,6 +30,23 @@ sequenceDiagram;
     John->>John: 自己处理
     John-->>-Alice: Hi
 ```
+
+`activate/deactivate`主动激活某层，添加生命周期：
+
+```mermaid
+sequenceDiagram;
+    Alice->>+John: Hello
+    John->>John: 转换Hello
+    John->>-Tony: 你好
+    activate Tony
+    Tony->>Tony: 处理“你好”
+    Tony-->>+John: 你好
+    deactivate Tony
+    John-->>John: 转换“你好”
+    John-->>-Alice: Hello
+```
+
+
 
 ### 3. 甘特图 (Gantt Chart)
 

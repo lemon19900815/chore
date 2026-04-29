@@ -251,3 +251,15 @@ ssh-keygen -t rsa123 -b 4096 -C "user@github.com"
 # 把生成的**公钥**添加到gitlab的SSH Keys管理页面
 ```
 
+## 9. git restore
+
+git status显示本地存在修改，想要还原时，使用git restore
+
+```sh
+# 显示本地修改纪录
+$ git status
+
+# 还原本地所有修改，也可指定还原某个文件
+$ git restore .
+```
+

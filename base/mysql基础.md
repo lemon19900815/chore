@@ -167,6 +167,14 @@ mysql -uroot -p123456 --max_allowed_packet=512M --default-character-set=utf8 des
 
 ### 1.4 mysql访问控制
 
+- 修改密码
+
+  记得密码的前提下，进入mysql控制台
+
+  ```sql
+  ALTER USER '用户'@'%' IDENTIFIED BY '你的密码';
+  ```
+
 - **查看用户权限**
 
   在 MySQL 中，你可以通过查询 `mysql.user` 表来查看用户的访问权限。使用以下 SQL 查询查看某个用户的权限：
@@ -294,6 +302,42 @@ CREATE TABLE your_table (
 
 ## 3. 版本升级 5.7->8.4
 
+迁移数据时，使用**mysql shell**可以快速迁移（备份5.7迁移到8.4中）
+
+
+
+### 3.1使用mysql_config_editor配置密码
+
+导出/导入数据时，需要多次输入密码，或者在脚本中写入明文密码，容易造成密码泄露，容易引发安全风险，通过mysql_config_editor可以避免该问题。
+
+
+
+### 3.2 使用mysql shell解决数据迁移很慢问题
+
+- mysqldump导出数据速度尚可，但是使用mysql db<backup.sql导入数据会很慢；
+
+- 10G的数据大概会耗时70分钟左右，我们一定会面临更大的数据库，所以必须要使用其他工具；
+
+- 使用 mysql shell 可以提升迁移速度。
+
+```sh
+# 导出
+mysqlsh root@10.18.92.74:3306 --password --js -e "util.dumpSchemas(['mydb'], 'D:/mysql_dump/mydb', {threads:8, chunking:true, bytesPerChunk:'256M', compression:'zstd'})"
+
+# 开启local_infile然后执行导入
+show global VARIABLES like 'local_infile'
+set global local_infile=ON;
+
+mysqlsh root@host --mysql --execute "SET GLOBAL local_infile=1"
+
+# 导入
+mysqlsh root@127.0.0.1:3306 --password --js -e "util.loadDump('D:/mysql_dump/mydb', {threads: 8})"
+```
+
+
+
+### 3.3 迁移过程中存在的其他问题
+
 https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html
 
 以下是升级过程中的注意事项：
@@ -377,7 +421,7 @@ https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html
 
 
 
-## 4. mysql核心配置
+## 4. mysql 核心配置
 
 - sync_binlog&innodb_flush_log_at_trx_commit
 
@@ -425,3 +469,43 @@ https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html
 
 
 
+## 5. 杂项
+
+### 5.1 怎么可以做到不在脚本中使用明文登录mysql或处理数据导出等操作？
+
+脚本中出现明文：
+
+```sh
+# 明文登录数据库
+mysql -uroot -p123456
+
+# 明文备份数据库
+mysqldump -uroot -p123456 mydb > backup.sql
+```
+
+改进：
+
+```sh
+# 通过命令行设置一次账号密码
+mysql_config_editor set --login-path=local57 --user=root --password
+
+# 显示设置信息
+mysql_config_editor print --all
+
+# 后续登录使用指定信息进行登录
+mysql --login-path=local57
+
+# 备份数据
+mysqldump --login-path=local57 mydb > backup.sql
+```
+
+`mysql_config_editor` 配置的 login-path 信息存储在一个名为 `.mylogin.cnf` 的文件中，这是一个加密的配置文件。
+
+它的具体存储位置会根据你的操作系统有所不同：
+
+- **Windows 系统**: `%APPDATA%\MySQL` 目录下；
+- **非 Windows 系统 (Linux, macOS 等)**: 当前用户的主 (`home`) 目录下；
+
+通常情况下，这个文件在你第一次使用 `mysql_config_editor` 命令时自动创建。
+
+- 
