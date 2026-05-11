@@ -4,6 +4,12 @@
 
 下载最新版本的cmake，clangd，ninja
 
+编译后端：msvc，g++等（windows下需要安装msvc+sdk）
+
+ninja：编译前端，组织组合调用编译后端工作（编译过程更友好等）
+
+clangd：智能提示，跳转等
+
 注意点：
 
 - 禁用c++的Intelli Sense，它会和clangd相冲突；
