@@ -263,3 +263,15 @@ $ git status
 $ git restore .
 ```
 
+## 10. git clean
+
+git clean清理未跟踪的文件，并且删除后不会进入回收站，需要**慎用**。
+
+```sh
+# 查看哪些文件会被clean删除掉
+git clean -fdn
+
+# 执行删除动作
+git clean -fd
+```
+

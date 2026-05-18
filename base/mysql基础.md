@@ -219,8 +219,24 @@ mysql -uroot -p123456 --max_allowed_packet=512M --default-character-set=utf8 des
     **注意：**
 
     1. 修改这2项信息之后，重启mysql服务；
-    2. windows下运行命令行工具`mysql -uroot -p`需要在cmd下；
-
+    
+  2. windows下运行命令行工具`mysql -uroot -p`需要在cmd下；
+    
+    3. sql文件里更新在8.0以上版本会执行失败：`ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s)`
+    
+       ```sql
+       update mysql.user set Host='%' where User='root';
+       update mysql.global_grants set HOST='%' where USER='root';
+       FLUSH PRIVILEGES;
+       ```
+    
+       应在脚本中使用如下方式增加远程访问控制：
+    
+       ```sql
+       CREATE USER 'root'@'%' IDENTIFIED BY '123456';
+       GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+       FLUSH PRIVILEGES;
+       ```
     
 
 - 
