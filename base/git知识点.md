@@ -11,7 +11,7 @@
 
 
 
-## 1. git修改默认编辑器
+## 1. git editor
 
 ```sh
 # git默认使用的时nano编辑器
@@ -275,3 +275,81 @@ git clean -fdn
 git clean -fd
 ```
 
+## 11. Conventional Commits
+
+标准格式：
+
+```
+<type>(可选scope): <description>
+```
+
+例如：
+
+```
+feat(login): 支持微信登录
+fix(api): 修复用户信息为空的问题
+docs: 更新 README
+```
+
+| type     | 含义                       |
+| -------- | -------------------------- |
+| feat     | 新功能                     |
+| fix      | 修复 bug                   |
+| docs     | 文档修改                   |
+| style    | 代码格式调整（不影响逻辑） |
+| refactor | 重构                       |
+| perf     | 性能优化                   |
+| test     | 测试相关                   |
+| build    | 构建系统修改               |
+| ci       | CI/CD 修改                 |
+| chore    | 杂项、维护                 |
+| revert   | 回滚提交                   |
+
+很多公司会要求：
+
+```
+feat:
+fix:
+refactor:
+docs:
+```
+
+必须小写。
+
+description 一般：
+
+- 使用中文或英文
+- 不要首字母大写
+- 不加句号
+
+例如：
+
+✅：
+
+```
+fix(cache): 修复缓存失效问题
+```
+
+❌：
+
+```
+Fix Cache Bug.
+```
+
+最佳实践：
+
+```
+feat(module): 新增xxx功能
+fix(module): 修复xxx问题
+refactor(module): 重构xxx逻辑
+docs: 更新文档
+chore: 更新依赖
+
+# 不兼容升级
+feat(api)!: 修改用户接口返回结构
+```
+
+好处：
+
+1. 方便日志信息检索；
+2. 方便自动化工具生成CHANGELOG；
