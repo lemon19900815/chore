@@ -19,10 +19,19 @@ Codex Desktop编程工具使用
 - 如果出现codex启动闪退的情况，删除缓存文件，重新启动；
 
   ```
-  %APPDATA%\Codex
-  %LOCALAPPDATA%\Codex
+  rmdir /s /q "%APPDATA%\Codex"
+  rmdir /s /q "%LOCALAPPDATA%\Codex"
+  rmdir /s /q "%USERPROFILE%\.codex\cache"
   ```
 
-  
+  这里还可能出现其他启动闪退问题，可以让vscode的codex插件对它进行修复；
+
+  第一次清除缓存之后，可以正常登录。但随后仍然出现不能登录的情况，后续gpt继续分析是因为wsl环境问题，我安装wsl环境后依旧；最后codex插件分析出来是因为windows_updater问题导致。通过使用环境变量禁用windows_updater绕过更新检查。
+
+  ```
+  CODEX_SPARKLE_ENABLED=false
+  ```
+
+  ![](./img/codex-dump.png)
 
 - 
