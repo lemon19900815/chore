@@ -353,3 +353,63 @@ feat(api)!: 修改用户接口返回结构
 
 1. 方便日志信息检索；
 2. 方便自动化工具生成CHANGELOG；
+
+## 12. git push
+
+```bash
+# -u: --set-upstream
+git push -u origin feature/test
+```
+
+如果远端 `origin` 上不存在 `feature/test` 分支，Git 会自动创建。
+如果已经存在，则直接推送更新。
+
+**当前分支直接推送（最常用）**
+
+如果你已经切换到目标分支：
+
+```
+git push -u origin HEAD
+```
+
+或者：
+
+```
+git push -u origin $(git branch --show-current)
+```
+
+这样不需要手动写分支名。
+
+## 13. git fetch
+
+对于小型而言，在原来的仓库中直接新建自己的开发分支是更简单的方式。
+
+在本地自己分支开发时，别人开发完之后合并到一个dev的主分支，本地个人开发分支需要拉取dev，然后合并到个人的开发分支。
+
+```sh
+# 只拉取 dev,如果不指定dev，会拉取所有的分支
+git fetch origin dev
+
+# 在 个人开发分支 上变基（或者项目有merge要求的，使用merge）
+git rebase/merge origin/dev
+```
+
+## 14. git switch
+
+切换分支命令：主要为了把切换分支从 `git checkout` 命令独立出来。
+
+切换分支：`git checkout test`，但 `git checkout file.cpp` 表示恢复文件。
+
+所以 Git 后来拆成：
+
+```sh
+git switch   # 分支相关
+git restore  # 文件恢复相关
+```
+
+创建并切换到新分支（如果没有指定origin/main则使用当前分支为基）
+
+```sh
+git switch -c new_branch origin/main
+```
+

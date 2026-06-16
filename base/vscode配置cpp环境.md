@@ -1,5 +1,7 @@
 # vscode配置cpp环境
 
+## 1. 基础配置
+
 配置插件：clangd、cmake tools、 c++
 
 下载最新版本的cmake，clangd，ninja
@@ -39,3 +41,22 @@ clangd：智能提示，跳转等
 
 - 
 
+
+
+## 2. vscode快捷键
+
+- Ctrl+P：打开快速访问
+- Ctrl+Shift+P：显示并运行命令
+
+## 3. 编译优化
+- vscode配置ninja+msvc编译大型c++工程时，通常会造成电脑卡顿，可以在`settings.json`中新增：`"cmake.buildArgs": ["--parallel", "8"]`限制并行编译的核心数量，但会降低编译速度；
+```json
+{
+
+    "cmake.sourceDirectory": "${workspaceFolder}/src",
+    "files.autoGuessEncoding": true,
+    "cmake.buildArgs": ["--parallel", "8"]
+
+}
+```
+- 

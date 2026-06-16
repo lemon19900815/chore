@@ -86,7 +86,9 @@
 1. 发布/订阅话题时，如果接收组为空，则使用通配符 `+` 表示任意接收组；
 2. 请求和回复只在消息主题上做一层特殊的封装处理；
    - 请求方：发布请求 `*_req`，并且订阅回复 `*_rsp`;
+   
    - 回复方：订阅请求 `*_req`，并且发布回复 `*_rsp`;
+   
    - 请求/回复的接口应该有唯一编号，以此来作为请求和回复的关联，回复时，需要使用请求的编号作为响应的唯一编号；
    
      ```c++
@@ -100,7 +102,26 @@
      cli.response(seqNo, topic, message, receieveGroupName, receieverName);
      ```
    
-     
+
+3. request&response在话题的基础上增加一个uuid，这样可以让请求并发；
+
+   `{发送组}/{发送者}/{接收组}/{接收者}/{话题_req}/uuid`
+
+   业务层实现时，可以通过uuid等待指定的响应。
+
+   ```c++
+   unordered_map<uuid, promise<response>> pending_requests;
+   
+   // t1: 当前请求线程阻塞，等待响应，不阻塞其他线程
+   auto resp = pending_requests[uuid].get_future().wait_for();
+   
+   // t2: 收到response回复，设置值，唤醒等待线程
+   pending_requests[uuid].set_value(response);
+   ```
+
+   
+
+   
 
 ## 4. mosquitto源码分析图
 

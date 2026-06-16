@@ -58,6 +58,9 @@ Mounts:         D:\workspace => /mnt/workspace
                     GID map: -2:default
 ```
 
+或者直接在gui上操作挂载：
+![](./img/multipass-gui-mount.png)
+
 ## 3. multipass虚拟机设置固定ip
 multipass每次虚拟机启动时，ip会发生变化，由DHCP动态分配，造成像`MobaXterm`这类工具不能访问。
 
