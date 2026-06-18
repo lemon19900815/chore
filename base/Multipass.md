@@ -61,13 +61,49 @@ Mounts:         D:\workspace => /mnt/workspace
 或者直接在gui上操作挂载：
 ![](./img/multipass-gui-mount.png)
 
-## 3. multipass虚拟机设置固定ip
-multipass每次虚拟机启动时，ip会发生变化，由DHCP动态分配，造成像`MobaXterm`这类工具不能访问。
+## 3. multipass虚拟机设置固定IP
+multipass每次虚拟机启动时，IP会发生变化，由DHCP动态分配，造成像`MobaXterm`这类工具不能访问。
 
-- 查看之前配置信息
-```sh
-ubuntu@cute-chickadee:/mnt/workspace$ sudo cat /etc/netplan/50-cloud-init.yaml 
+**为什么不该改 NAT 网卡的 IP**
+
+Multipass 默认网卡（也就是你看到的 `192.168.x.x`，对应 `eth0`/`default`）走的是 **Hyper-V NAT 交换机**，这个地址段是由 Hyper-V 内部的 DHCP 服务管理的，有几个限制：
+
+- 这个 NAT 网络的网关、DHCP 范围是 Hyper-V 自动维护的，**手动改成静态 IP 容易和 DHCP 池冲突**，或者在 Hyper-V 重启/重建虚拟交换机后网段整体漂移，导致你写死的 IP 失效；
+- 这张网卡同时承载 Multipass 守护进程与实例通信的关键流量（`multipass exec`、文件挂载等），改错配置很容易复现你之前"卡 starting"的问题；
+- 这也是为什么之前 `dhcp4: false` 直接写在 `default` 接口上会出问题——本质上是在跟 Hyper-V 的 NAT 机制打架；
+
+- 查看网络配置：
+```cmd
+C:\Users\buerjia>multipass networks
+Name             Type       Description
+Default Switch   switch     Virtual Switch with internal networking
+Realtek          ethernet   Realtek PCIe GbE Family Controller
 ```
+
+### 3.1 设置Bridge网络：
+```cmd
+# 查看multipass网络：网络适配器修改成英文名，方便识别
+multipass networks
+
+# 设置网桥偏好网络（这一步可以通过GUI设置）
+multipass set local.bridged-network=Realtek
+
+# 停止实例
+multipass stop myvm
+
+# 绑定网桥
+multipass set local.myvm.bridged=true
+
+# 启动（或者从GUI中启动实例）
+multipass start myvm
+```
+
+![](./img/multipass-set-bridge.png)
+
+### 3.2 设置网桥固定IP
+网络配置文件：`/etc/netplan/50-cloud-init.yaml`
+
+设置网桥后的原始配置：
 ```yaml
 network:
   version: 2
@@ -77,9 +113,17 @@ network:
         macaddress: "52:54:00:3a:a8:6a"
       dhcp-identifier: "mac"
       dhcp4: true
+    extra0:
+      match:
+        macaddress: "52:54:00:a4:69:08"
+      optional: true
+      dhcp-identifier: "mac"
+      dhcp4: true
+      dhcp4-overrides:
+        route-metric: 20
 ```
 
-- 使用 `ip addr` 查看当前ip，然后修改 `50-cloud-init.yaml` 配置：
+固定IP后的配置：
 ```yaml
 network:
   version: 2
@@ -88,12 +132,28 @@ network:
       match:
         macaddress: "52:54:00:3a:a8:6a"
       dhcp-identifier: "mac"
-      dhcp4: false                    # 关闭 DHCP
+      dhcp4: true
+    extra0:
+      match:
+        macaddress: "52:54:00:a4:69:08"
+      optional: true
+      dhcp-identifier: "mac"
+      dhcp4: false
       addresses:
-        - 172.17.190.157/20           # 你想要的固定 IP（注意子网段）
+        - 10.18.39.202/21
+      routes:
+        - to: default
+          via: 10.18.32.1
+          metric: 20
       nameservers:
         addresses: [8.8.8.8, 1.1.1.1]
 ```
+
+注意：
+- extra0与实际的 `ip a` 查看获得的eth1是相同的，你也可以把它修改为eth1；
+- 网卡配置是通过match下的address匹配的与网卡名无关；
+- 固定分配的IP需要确认路由器不会把它分配给其他设备；
+
 
 - 操作步骤
 ```sh
@@ -111,3 +171,25 @@ sudo netplan apply
 ```
 
 **注意：** 操作完成之后，==重启multipass服务==。
+
+**固定IP修改错误通过以下方式重置：**
+Multipass 在 Windows 上使用 Hyper-V，可以直接用控制台连接，**不依赖网络**：
+
+1. 打开 **Hyper-V 管理器**（搜索 `Hyper-V Manager`）
+2. 找到对应的 Multipass 实例
+3. 双击 → 打开控制台窗口
+4. 直接登录（用户名 `ubuntu`，无密码或密码也是 `ubuntu`）
+
+## 4. 其他
+- 删除命令运行时，只是把实例标记为delete，并未真正删除；
+```cmd
+# 标记删除
+multipass delete instance
+
+# 真正删除
+multipass purge
+
+# 恢复（被标记删除后）
+multipass recover instance
+```
+
