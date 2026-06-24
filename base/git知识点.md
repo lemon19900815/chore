@@ -413,3 +413,23 @@ git restore  # 文件恢复相关
 git switch -c new_branch origin/main
 ```
 
+## 15. 其他
+如果本地使用的git受控文件需要与git远程仓库的不一致，并且该文件可能处于长期不修改状态。可以使用以下方式对它进行调整，这样就可以避免每次切换分支或者拉取更新时，提示本地有修改未提交。
+
+让git忽略/不跟踪文件的本地修改：
+```bash
+git update-index --skip-worktree src/.clangd
+```
+如果出现对文件进行了修改，则需要使用以下方式进行恢复：
+```bash
+git update-index --no-skip-worktree src/.clangd
+```
+恢复之后把当前文件暂存/重置：
+```bash
+# 暂存
+git stash/git stash pop
+# 重置
+git checkout -- src/.clangd
+```
+
+
