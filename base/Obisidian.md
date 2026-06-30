@@ -9,3 +9,7 @@ Obisidian+github：作为私人好用的笔记软件。
 - 一般我们会把当前笔记的文件存在于当前目录的img目录下，所以修改上述设置；
 - 从外部粘贴的图片格式不标准，可能包含空格等，在md链接里需要被转移，所以可以安装`Paste Image Rename`插件：
 ![](img/Obisidian-20260624-1.png)
+
+### 2.2 mermaid显示很小的区域
+关闭限制行宽可以把mermaid的显示宽度扩大（一般的mermaid图是足够的），如果还是不够宽，则mermaid可以滑动。
+![](img/Obisidian.png)
