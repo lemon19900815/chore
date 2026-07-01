@@ -244,12 +244,24 @@ $ git checkout -b branch_name
 
 ## 8. TortoiseGit设置ssh密钥
 
-```sh
-# 生成ssh密钥
-ssh-keygen -t rsa123 -b 4096 -C "user@github.com"
+生成ssh密钥：
 
-# 把生成的**公钥**添加到gitlab的SSH Keys管理页面
+```sh
+ssh-keygen -t rsa -b 4096 -C "user@github.com"
 ```
+
+密钥信息会生成到home下：
+Windows：`C:\Users\buerjia\.ssh`
+Linux：`~/.ssh/`
+
+```
+# 私钥
+id_rsa
+# 公钥
+id_rsa.pub
+```
+
+把生成的 **公钥** 内容添加到gitlab的SSH Keys管理页面。
 
 ## 9. git restore
 
@@ -413,7 +425,207 @@ git restore  # 文件恢复相关
 git switch -c new_branch origin/main
 ```
 
-## 15. 其他
+## 15. git lfs
+
+[Git LFS（Large File Storage）](https://git-lfs.com/)是 Git 的扩展，用来管理大文件（模型、安装包、图片、视频、DLL、ZIP 等），避免把大文件直接塞进 Git 对象库导致：
+
+- clone/pull/push 很慢
+- 仓库体积暴涨
+- GitHub 推送超时（你现在遇到的情况就可能相关）
+- 历史记录中重复保存大文件
+
+### 15.1 跟踪大文件
+
+例如项目中有：
+
+```
+install.rar
+release.zip
+model.bin
+```
+
+配置：
+
+```bash
+git lfs track "*.rar"
+git lfs track "*.zip"
+git lfs track "*.bin"
+```
+
+会生成：
+
+```
+.gitattributes
+```
+
+内容类似：
+
+```
+*.rar filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+```
+
+提交：
+
+```bash
+git add .gitattributes
+git commit -m "Add LFS tracking"
+```
+
+### 15.2 添加文件
+例如：
+
+```bash
+git add release.zip
+git commit -m "Add release package"git push
+```
+
+实际上 Git 中保存的是：
+
+```
+version https://git-lfs.github.com/spec/v1
+oid sha256:...
+size 123456789
+```
+
+真正文件上传到 Git LFS 存储区。
+
+### 15.3 查看LFS文件
+查看当前跟踪规则：
+
+```bash
+git lfs track
+```
+
+查看仓库中的 LFS 对象：
+
+```bash
+git lfs ls-files
+```
+
+例如：
+
+```
+abc123 * release.zip
+def456 * install.rar
+```
+
+### 15.4 拉取LFS文件
+克隆：
+
+```bash
+git clone <repo>
+```
+
+自动下载 LFS 文件。
+
+如果只拉到了指针文件：
+
+```bash
+git lfs pull
+```
+
+或者：
+
+```bash
+git lfs fetch
+git lfs checkout
+```
+### 15.5. 跳过 LFS 下载
+
+有时仓库太大：
+
+```bash
+set GIT_LFS_SKIP_SMUDGE=1
+git clone <repo>
+```
+
+之前你就用过这个方法。
+
+之后需要时：
+
+```bash
+git lfs pull
+```
+
+再下载真正文件。
+
+### 15.6 查看LFS占用
+查看：
+
+```bash
+git lfs ls-files
+```
+
+以及：
+
+```bash
+git count-objects -vH
+```
+
+如果大文件都在 LFS 中：
+
+```
+size-pack
+```
+
+通常会很小。
+
+### 15.7 已提交大文件怎么办？
+
+很多人踩这个坑：
+
+**错误做法**
+
+先提交：
+
+```bash
+git add install.rargit commit
+```
+
+后来再：
+
+```bash
+git lfs track "*.rar"
+```
+
+这样没用。
+
+因为：
+
+```
+install.rar
+```
+
+已经进入 Git 历史。
+
+---
+
+**正确迁移**
+
+例如：
+
+```bash
+git lfs migrate import --include="*.rar"
+```
+
+或者：
+
+```bash
+git lfs migrate import --include="*.zip,*.rar,*.7z"
+```
+
+会重写历史，把历史中的大文件变成 LFS。
+
+然后：
+
+```bash
+git push --force
+```
+
+## 16. 其他
+
 如果本地使用的git受控文件需要与git远程仓库的不一致，并且该文件可能处于长期不修改状态。可以使用以下方式对它进行调整，这样就可以避免每次切换分支或者拉取更新时，提示本地有修改未提交。
 
 让git忽略/不跟踪文件的本地修改：
