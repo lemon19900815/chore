@@ -262,7 +262,9 @@ id_rsa.pub
 ```
 
 把生成的 **公钥** 内容添加到gitlab的SSH Keys管理页面。
+`TortoiseGit`->设置/网络 修改为：`C:\Windows\System32\OpenSSH\ssh.exe`
 
+![](img/git知识点.png)
 ## 9. git restore
 
 git status显示本地存在修改，想要还原时，使用git restore
