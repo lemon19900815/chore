@@ -13,3 +13,12 @@ Obisidian+github：作为私人好用的笔记软件。
 ### 2.2 mermaid显示很小的区域
 关闭限制行宽可以把mermaid的显示宽度扩大（一般的mermaid图是足够的），如果还是不够宽，则mermaid可以滑动。
 ![](img/Obisidian.png)
+
+### 2.3 obsidian不能查看代码文件问题
+
+首先打开：文件与连接->检测所有类型文件，这样才能在树形结构中显示代码文件。
+![](img/Obisidian-20260626.png)
+
+
+然后安装 `VSCode Editor` 插件，并且在 `文件扩展名` 新增自定义扩展名。修改后记得需要重启！！！否则扩展名不会生效。
+![](img/Obisidian-20260625.png)
