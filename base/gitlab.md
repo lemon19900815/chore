@@ -294,3 +294,105 @@ build:
 你应该也观察到了，每次docker启动runner镜像时，都会执行我们在gitlab-ci中定义的命令：`apt update & apt install cmake`，效率较低。
 
 使用docker build构建特有镜像解决该问题，参考：[docker基础：8. docker build](docker基础.md)
+
+## 4. 扩展示例（包含format）
+
+检查当前这次提交引入的 C/C++ 修改是否符合 clang-format：
+```sh
+git clang-format --diff HEAD^
+```
+
+`Dockerfile`
+```Dockerfile
+FROM gcc:latest
+
+RUN apt-get update && \
+    apt-get install -y \
+        cmake \
+        ninja-build \
+        clang-format && \
+    rm -rf /var/lib/apt/lists/*
+```
+
+使用 docker build 构建镜像：
+```sh
+docker build -t my-cpp-builder:1.0 .
+```
+
+`.gitlab-ci.yml`
+```yaml
+image: my-cpp-builder:1.0
+
+stages:
+  - format
+  - build
+
+variables:
+  GIT_DEPTH: "0"
+
+format:
+  stage: format
+
+  script:
+    - git log --oneline -5
+    - git rev-parse HEAD
+    - git rev-parse HEAD^
+    - |
+      diff=$(git clang-format --diff HEAD^)
+      echo $diff
+
+      if [[ "$diff" != "no modified files to format" &&
+            "$diff" != "clang-format did not modify any files" ]]; then
+          echo "The diff is not formatted correctly."
+          echo "$diff"
+          exit 1
+      fi
+
+build:
+  stage: build
+
+  script:
+    - cmake -B build -G Ninja .
+    - cmake --build build
+    - echo "current dir:" `pwd`
+    - echo "Generated files:"
+    - find build -maxdepth 2 -type f
+
+  artifacts:
+    paths:
+      - build/helloworld
+
+    expire_in: 7 days
+```
+
+`.clang-format`
+```
+---
+Language: Cpp
+BasedOnStyle: Google
+# Should be declared this way:
+BreakBeforeBraces: Custom
+BraceWrapping:
+  BeforeElse: true
+AllowShortLambdasOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+---
+Language: JavaScript
+DisableFormat: true
+---
+# Ignore json file
+Language: Json
+DisableFormat: true
+
+```
+
+如果想要所有的代码都符合clang-format规范，可以使用以下方式检查格式：
+```yaml
+format:
+  stage: format
+
+  script:
+    - |
+      find . \( -name "*.cpp" -o -name "*.h" -o -name "*.hpp" \) \
+        -exec clang-format --dry-run --Werror {} +
+```
