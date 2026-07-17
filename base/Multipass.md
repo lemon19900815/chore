@@ -62,6 +62,7 @@ Mounts:         D:\workspace => /mnt/workspace
 ![](./img/multipass-gui-mount.png)
 
 ## 3. multipass虚拟机设置固定IP
+
 multipass每次虚拟机启动时，IP会发生变化，由DHCP动态分配，造成像`MobaXterm`这类工具不能访问。
 
 **为什么不该改 NAT 网卡的 IP**
@@ -81,6 +82,9 @@ Realtek          ethernet   Realtek PCIe GbE Family Controller
 ```
 
 ### 3.1 设置Bridge网络：
+
+**注意：** Windows下不能使用WIFI作为网桥！
+
 ```cmd
 # 查看multipass网络：网络适配器修改成英文名，方便识别
 multipass networks
@@ -101,6 +105,7 @@ multipass start myvm
 ![](./img/multipass-set-bridge.png)
 
 ### 3.2 设置网桥固定IP
+
 网络配置文件：`/etc/netplan/50-cloud-init.yaml`
 
 设置网桥后的原始配置：
@@ -181,6 +186,7 @@ Multipass 在 Windows 上使用 Hyper-V，可以直接用控制台连接，**不
 4. 直接登录（用户名 `ubuntu`，无密码或密码也是 `ubuntu`）
 
 ## 4. 其他
+
 - 删除命令运行时，只是把实例标记为delete，并未真正删除；
 ```cmd
 # 标记删除
