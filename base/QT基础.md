@@ -15,10 +15,64 @@ reference：
 - [QTableWidget用法详解](https://blog.csdn.net/zheng19880607/article/details/132840104)
 
 
+## 3. 翻译（语言家）
 
-## 3. 其他
+- 源码：
+```c++
+QLabel *label = new QLabel;
+label->setText(tr("Start"));
+```
 
-### 3.1 设置QLabel行间距
+- 生成 ts：
+```bash
+# 翻译src目录下的所有文件
+lupdate src -ts translations/app_zh_CN.ts
+```
+
+- Qt Linguist 翻译：
+![](img/QT基础.png)
+
+- 生成 qm：
+```bash
+lrelease translations/app_zh_CN.ts
+```
+
+- 程序加载：
+```c++
+QTranslator translator;
+translator.load("app_zh_CN.qm");
+app.installTranslator(&translator);
+```
+
+- Windows 下推荐写一个 bat：`update_translation.bat`
+```bat
+@echo off
+
+set QT_BIN=C:\Qt\6.8.0\msvc2022_64\bin
+
+%QT_BIN%\lupdate.exe . -ts translations\app_zh_CN.ts -no-obsolete
+%QT_BIN%\lrelease.exe translations\app_zh_CN.ts
+
+pause
+```
+
+多个文件时，遍历执行lupdate和lrelease：
+```bat
+@echo off
+
+set QT_BIN=C:\Qt\Qt5.12.8\5.12.8\msvc2015_64\bin
+
+for /r %%F in (*.ts) do (
+    echo update file: %%F
+    %QT_BIN%\lupdate.exe . -ts %%F
+    %QT_BIN%\lrelease.exe %%F
+)
+
+pause
+```
+## 4. 其他
+
+### 4.1 设置QLabel行间距
 
 由于qlabel本身不支持行间距的样式表属性line-height，所有需要通过html来实现行间距的设置。如下：
 
@@ -27,14 +81,14 @@ QString tips = u8"<html><body><p style='line-height: 150%'>升级完成！<br>�
 label.setText(tips);
 ```
 
-### 3.2 UI布局
+### 4.2 UI布局
 
 - 参与布局的元素需要在QWidget上或者QFrame上，这样才可以设置该widget的尺寸（最小或最大尺寸），缩放时才能保证不会变形；
 - 窗口左右缩放，需要在Designer上选择水平或垂直分裂布局器；
 
 
 
-### 3.3 基础用法
+### 4.3 基础用法
 
 1. 设置窗口风格模式
 

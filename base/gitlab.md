@@ -163,8 +163,10 @@ sudo docker exec -it my-runner gitlab-runner register \
     --docker-volumes "/var/run/docker.sock:/var/run/docker.sock"
 ```
 
---docker-image 默认镜像。
-当 `.gitlab-ci.yml` 没指定镜像时使用。
+--docker-image 默认镜像：当 `.gitlab-ci.yml` 没指定镜像时使用。
+
+--docker-pull-policy "if-not-present"：只有本地不存在该镜像时才拉取，本地已有则直接复用。
+`pull_policy = "if-not-present"` 让 GitLab Runner 在跑 Job 时**优先复用本地已有的 Docker 镜像，只在本地不存在时才去拉取**，用来加速 CI、降低带宽消耗、支持离线/内网场景。
 
 注册完毕后，会写入 `config.toml` 文件：
 
@@ -322,6 +324,9 @@ docker build -t my-cpp-builder:1.0 .
 `.gitlab-ci.yml`
 ```yaml
 image: my-cpp-builder:1.0
+# 关键：如果本地存在，不强制拉取
+pull_policy: if-not-present # 或 never
+
 
 stages:
   - format

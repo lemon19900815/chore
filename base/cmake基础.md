@@ -8,7 +8,7 @@ reference:
 
 2、https://zhuanlan.zhihu.com/p/534439206
 
-3、[csdn: add_custom_target](https://blog.csdn.net/MacKendy/article/details/122693478?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522169344440516800211537054%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=169344440516800211537054&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-122693478-null-null.142^v93^chatgptT3_2&utm_term=add_custom_target&spm=1018.2226.3001.4187)
+3、[csdn: add_custom_target](https://blog.csdn.net/MacKendy/article/details/122693478)
 
 4、https://github.com/wzpan/cmake-demo/tree/master
 
@@ -295,6 +295,8 @@ add_custom_target(
 )
 ```
 
+
+
 ### 1.17 cpack打包
 
 ```cmake
@@ -309,7 +311,42 @@ set (CPACK_PACKAGE_VERSION_PATCH "1")
 include (CPack)
 ```
 
-### 1.18 c++编译选项
+```cmake
+# 指定打包格式为 **ZIP**（CPack 支持 ZIP、NSIS、DEB、RPM 等多种生成器）
+set(CPACK_GENERATOR "ZIP")
+
+# 包名设为 `Test`
+set(CPACK_PACKAGE_NAME "Test")
+
+# 输出文件名固定为 `Test.zip`（默认会是 `Test-<version>-<platform>.zip`，这里强制去掉了版本和平台后缀）。
+set(CPACK_PACKAGE_FILE_NAME "Test")
+
+# zip 文件输出到 **build 目录的上一级**（即项目根目录），这样 CI 脚本里 `mv Test.zip packages` 就能直接找到。
+set(CPACK_OUTPUT_FILE_PREFIX "${CMAKE_BINARY_DIR}/..")
+
+# 这是关键——告诉 CPack **把什么文件装进包里**：
+# - **源目录**：`bin/`
+# - **目标位置**：`.`（zip 包内的根目录）
+# - 效果：把该目录下所有文件（exe、dll、配置文件等）**原样平铺**打进 zip
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/" DESTINATION . )
+
+# 启用 CPack，加载 CPack 模块，注册 `package` 构建目标。
+include(CPack)
+
+# 之后执行以下命令，就会生成 `Test.zip`。
+cmake --build build --target package
+```
+
+**整体流程**
+```
+CMake Configure → cmake --build → cmake --build --target package
+                                        ↓
+		                            收集 bin/* 
+                                        ↓
+                              CPack 打包 → Test.zip（输出到项目根目录）
+```
+
+### 1.18 cpp编译选项
 
 ```cmake
 # 设置c++标准

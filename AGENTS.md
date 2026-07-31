@@ -27,3 +27,17 @@ This is a personal learning repository ("杂货铺") - a collection of code samp
 - No package managers (npm, pip, cargo) at root level
 - Each subdirectory is independent - no unified build or test commands
 - No AGENTS.md, CLAUDE.md, or similar instruction files previously existed
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in this repo's GitHub Issues (lemon19900815/chore), via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary — the five canonical roles used verbatim. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

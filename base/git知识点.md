@@ -267,14 +267,50 @@ id_rsa.pub
 ![](img/git知识点.png)
 ## 9. git restore
 
-git status显示本地存在修改，想要还原时，使用git restore
+git status显示本地存在修改，想要还原时，使用 `git restore`
 
-```sh
+```bash
 # 显示本地修改纪录
 $ git status
 
 # 还原本地所有修改，也可指定还原某个文件
 $ git restore .
+```
+
+本地普通修改：
+```bash
+普通本地修改
+    ↓
+git restore .
+    ↓
+恢复到 HEAD
+```
+
+合并修改：
+```bash
+git merge dev
+    ↓
+产生 merge commit
+    ↓
+HEAD 已经包含 dev 的代码
+    ↓
+git restore . 无法撤销 merge
+```
+
+如果你只是**刚刚执行了 merge，现在后悔了**：
+```bash
+git reset --hard ORIG_HEAD
+```
+
+如果**merge 还处于冲突状态**：
+```bash
+git merge --abort
+```
+
+对于添加的文件，想要从stage中移除：
+```bash
+git add <文件>
+git restore --staged <文件>
 ```
 
 ## 10. git clean
@@ -726,7 +762,7 @@ S1
 - 方案三：每次新建功能分支
 > 不要长期维护一个 `audit`。
 
-## 17. 其他
+## 17. 本地修改不纳入git跟踪
 
 如果本地使用的git受控文件需要与git远程仓库的不一致，并且该文件可能处于长期不修改状态。可以使用以下方式对它进行调整，这样就可以避免每次切换分支或者拉取更新时，提示本地有修改未提交。
 
@@ -746,4 +782,42 @@ git stash/git stash pop
 git checkout -- src/.clangd
 ```
 
+## 18. gh 命令行用法
 
+登录（设置代理再登录）：
+```powershell
+$env:HTTPS_PROXY = "http://127.0.0.1:7890"
+$env:HTTP_PROXY = "http://127.0.0.1:7890"
+gh auth login
+```
+
+交互展示：
+```powershell
+PS C:\Users\buerjia\Desktop> gh auth login
+? Where do you use GitHub? GitHub.com
+? What is your preferred protocol for Git operations on this host? SSH
+? Upload your SSH public key to your GitHub account? C:\Users\buerjia\.ssh\id_rsa.pub
+? Title for your SSH key: (GitHub CLI)
+
+? Title for your SSH key: GitHub CLI
+? How would you like to authenticate GitHub CLI? Login with a web browser
+
+! First copy your one-time code: xxxx-xxxx
+Press Enter to open https://github.com/login/device in your browser...
+✓ Authentication complete.
+- gh config set -h github.com git_protocol ssh
+✓ Configured git protocol
+✓ SSH key already existed on your GitHub account: C:\Users\maccura\.ssh\id_rsa.pub
+✓ Logged in as lemon19900815
+```
+
+创建issue：`helper/console_bar.h不是utf8格式的在github页面不能正确显示中文注释`
+![](img/git知识点-2.png)
+修复issue：
+![](img/git知识点-1.png)
+修复完成后会推送更新，并关闭issue。
+
+github-issue页面展示：
+![](img/git知识点-3.png)
+
+总结：可以利用github的issue做方案、问题跟踪等。
