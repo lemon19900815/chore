@@ -1,4 +1,4 @@
-#ifndef __Proxy_Image_Inc_H__
+ï»¿#ifndef __Proxy_Image_Inc_H__
 #define __Proxy_Image_Inc_H__
 
 #include "../stdafx.h"
@@ -40,7 +40,7 @@ public:
 	}
 
 	void display() override {
-        // ÑÓ³ÙÊµÀý»¯
+        // å»¶è¿Ÿå®žä¾‹åŒ–
         if (!real_img_) {
             real_img_ = std::make_shared<RealImage>(filename_);
         }

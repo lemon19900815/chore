@@ -1,4 +1,4 @@
-#ifndef __RING_BUFFER_INC_H__
+ï»¿#ifndef __RING_BUFFER_INC_H__
 #define __RING_BUFFER_INC_H__
 
 #include <string>
@@ -75,7 +75,7 @@
 #define smp_rmb() rmb()
 #define smp_wmb() wmb()
 
-// ÎŞËø»º³å¶ÓÁĞ.
+// æ— é”ç¼“å†²é˜Ÿåˆ—.
 class RingBuffer final
 {
 public:

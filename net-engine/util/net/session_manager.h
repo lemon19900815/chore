@@ -1,4 +1,4 @@
-#ifndef __SESSION_MANAGER_INC_H__
+ï»¿#ifndef __SESSION_MANAGER_INC_H__
 #define __SESSION_MANAGER_INC_H__
 
 #include "singleton.h"
@@ -16,34 +16,34 @@ public:
   SessionManager();
   ~SessionManager();
 
-  // ×¢²áÒµÎñÂß¼­²ã»Øµ÷
+  // æ³¨å†Œä¸šåŠ¡é€»è¾‘å±‚å›è°ƒ
   void registerProc(HandleProc on_connection, HandleProc on_close);
 
-  // bool active¼¤»îsession£»ÒÆ³ı¹ıÆÚµÄsession
+  // bool activeæ¿€æ´»sessionï¼›ç§»é™¤è¿‡æœŸçš„session
   void update(bool active);
 
-  // ĞÂµÄÁ¬½Ó
+  // æ–°çš„è¿æ¥
   void onAcceptSession(Session::PTR session);
-  // Á¬½Ó¹Ø±Õ
+  // è¿æ¥å…³é—­
   void onCloseSession(Session::PTR session);
 
 private:
-  // ½»»»accept»á»°
+  // äº¤æ¢acceptä¼šè¯
   void swapAcceptSessions(std::list<Session::WPTR>& swap_accept_seesion);
-  // Ó¦ÓÃ²ã¼¤»î»á»°
+  // åº”ç”¨å±‚æ¿€æ´»ä¼šè¯
   void activeAcceptSessions(std::list<Session::WPTR>& swap_accept_seesion);
 
-  // ½»»»close»á»°
+  // äº¤æ¢closeä¼šè¯
   void swapCloseSessions(std::list<int>& swap_close_seesion);
-  // Ó¦ÓÃ²ã¹Ø±Õ»á»°
+  // åº”ç”¨å±‚å…³é—­ä¼šè¯
   void detachCloseSessions(std::list<int>& swap_close_seesion);
 
-  // tickÓĞĞ§µÄ»á»°
+  // tickæœ‰æ•ˆçš„ä¼šè¯
   void tickActiveSessions();
 
-  // Ìí¼Ósessionµ½»î¶¯¶ÓÁĞÖĞ
+  // æ·»åŠ sessionåˆ°æ´»åŠ¨é˜Ÿåˆ—ä¸­
   bool addSession(Session::PTR session);
-  // ´Ó»î¶¯»á»°ÖĞÒÆ³ısession
+  // ä»æ´»åŠ¨ä¼šè¯ä¸­ç§»é™¤session
   bool detachSession(int id);
 
 private:
@@ -55,7 +55,7 @@ private:
   std::mutex close_mutex_;
   std::list<int> close_sessions_;
 
-  // ÒµÎñÂß¼­²ã»Øµ÷½Ó¿Ú
+  // ä¸šåŠ¡é€»è¾‘å±‚å›è°ƒæ¥å£
   HandleProc on_connection_;
   HandleProc on_close_;
 };

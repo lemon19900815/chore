@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdint>
 #include <memory>
@@ -183,7 +183,7 @@ public:
     CLASS_PTR(Spell);
 };
 
-// Ӧ��ʹ��װ��ģʽȥ����
+// 应该使用装饰模式去修饰
 class EnchantedRoom : public Room {
 public:
     EnchantedRoom(int num, Spell::Ptr spell) : Room(num) {
@@ -194,7 +194,7 @@ private:
     Spell::Ptr spell_;
 };
 
-// Ӧ��ʹ��װ��ģʽȥ����
+// 应该使用装饰模式去修饰
 class DoorNeedingSpell : public Door {
 public:
     DoorNeedingSpell(Room::Ptr r1, Room::Ptr r2) : Door(r1, r2) {
@@ -238,7 +238,7 @@ public:
     }
 };
 
-// ������/������ģʽ
+// 建造者/生成器模式
 class MazeBuilder {
 public:
     virtual void BuildMaze() {}
@@ -446,38 +446,38 @@ public:
 void factoryTest() {
     MazeGame game;
 
-    // Ӳ���봴��maze��������Ӧ�µ���Ϸ�淨��
-    // ������ħ������bomb�ĵ��������ݣ���Ҫ�޸Ĵ���maze�Ĺ���
+    // 硬编码创建maze；不能适应新的游戏玩法，
+    // 新增带魔法或者bomb的的类型数据，需要修改创建maze的规则
     auto maze1 = game.CreateMaze();
 
-    // ���󹤳�������ͨ��maze
+    // 抽象工厂创建普通的maze
     MazeFactory factory;
     auto maze2 = game.CreateMaze(factory);
 
-    // ���󹤳�������spell��maze
+    // 抽象工厂创建带spell的maze
     EnchantedMazeFactory enchanted_factory;
     auto maze3 = game.CreateMaze(enchanted_factory);
 
-    // ���󹤳�������bomb��maze
+    // 抽象工厂创建带bomb的maze
     BombedMazeFactory bombed_factory;
     auto maze4 = game.CreateMaze(bombed_factory);
 
-    // ���ģʽ���ǲ������޸Ĵ��룬���ǰѾ����仯���ǲ��ֽ��з�װ������
-    // ���ﾭ���仯�Ŀ��ܾ������Ե��淨����maze�Ĵ�������һ�㲻�ᷢ���仯��
-    // ����仯��ͨ������Ϊ��ά�ִ���Ĳ��䡣
+    // 设计模式不是不允许修改代码，而是把经常变化的那部分进行封装、抽象；
+    // 这里经常变化的可能就是属性的玩法，而maze的创建过程一般不会发生变化。
+    // 隔离变化：通常就是为了维持代码的不变。
 
     /*
-        ���󹤳�ģʽ���ŵ㣺
-        1�������˾������
-        2��ʹ�����ڽ�����Ʒϵ�У���ħ�����Թ����ߴ�ը�����Թ��ȣ�
-        3�������ڲ�Ʒ��һ����
+        抽象工厂模式的优点：
+        1、分离了具体的类
+        2、使得易于交换产品系列（带魔法的迷宫或者带炸弹的迷宫等）
+        3、有利于产品的一致性
 
-        ȱ�㣺
-        1������֧��������Ĳ�Ʒ��������Ʒ��Ҫ�޸�Factory������������ࣩ
+        缺点：
+        1、难以支持新种类的产品（新增产品需要修改Factory基类和所有子类）
 
-        ���ģʽ��
-        1��AbstractFactory���󹤳���ͨ���ù���������Factory Method��ʵ�֣�������Ҳ������Prototypeʵ�֡�
-        2��һ������Ĺ���ͨ����һ��������Singleton����
+        相关模式：
+        1、AbstractFactory抽象工厂类通常用工厂方法（Factory Method）实现，但它们也可以用Prototype实现。
+        2、一个具体的工厂通常是一个单件（Singleton）。
     */
 }
 
@@ -497,8 +497,8 @@ void builderTest() {
         << rooms << " rooms and "
         << doors << " doors" << std::endl;
 
-    // builder��factory�Ƚ�
-    // 1��builder������һ��������һ�����ӵĶ���
+    // builder和factory比较
+    // 1、builder着重于一步步构建一个复杂的对象
 }
 
 class InviteCode {
@@ -545,24 +545,24 @@ protected:
 class OnceCode : public InviteCode {
 protected:
     bool CheckValid() override {
-        // TODO���������Ƿ��Ѿ���ȡ��ͬ���͵�������
+        // TODO：检查玩家是否已经领取过同类型的邀请码
         return true;
     }
 
     void Record() override {
-        // TODO����¼��ȡ�������͵������룬�Ժ���������ȡ������
+        // TODO：记录领取过该类型的邀请码，以后不允许再领取该类型
     }
 };
 
 class ActivityCode : public InviteCode {
 protected:
     bool CheckValid() override {
-        // TODO���������Ƿ��Ѿ���ȡ��ͬ���͵�������
+        // TODO：检查玩家是否已经领取过同类型的邀请码
         return true;
     }
 
     void Record() override {
-        // TODO����¼��ȡ�������͵������룬�Ժ���������ȡ������
+        // TODO：记录领取过该类型的邀请码，以后不允许再领取该类型
     }
 };
 
@@ -581,7 +581,7 @@ void factoryMethodTest() {
     BombedMazeGame game2;
     auto maze2 = game2.CreateMaze();
 
-    // ����ʾ����������ʹ��
+    // 其他示例：邀请码使用
     auto invite_code = InviteCodeFactory::Create<OnceCode>();
     invite_code->Exchange();
 
@@ -651,9 +651,9 @@ void prototypeTest() {
     auto bombed_maze = game.CreateMaze(bombedMazeFactory);
 
     /* 
-        ԭ��ģʽ�ͳ��󹤳��ıȽϣ�
-        1��ԭ�Ͳ���Ҫ�ٴ�������ʵ������BombedFactory&EnchantedFactory�ȣ�
-        2��ʹ�ó��󹤳�ʱ������ҪΪÿһ��Product����ʵ��Clone�������ر���Clone��������ʱ
+        原型模式和抽象工厂的比较：
+        1、原型不需要再创建工厂实例（像BombedFactory&EnchantedFactory等）
+        2、使用抽象工厂时，不需要为每一个Product对象实现Clone方法，特别是Clone存在困难时
     */
 }
 

@@ -1,4 +1,4 @@
-#include "Factory/shape.h"
+ï»¿#include "Factory/shape.h"
 #include "Factory/producer_factory.h"
 #include "Singleton/gameworld.h"
 #include "Builder/meal.h"
@@ -27,77 +27,77 @@
 
 int main(int argc, char** argv)
 {
-    // ¹¤³§Ä£Ê½
+    // å·¥å‚æ¨¡å¼
     Factory::FactoryPatternDemo::test();
 
-    // ³éÏó¹¤³§Ä£Ê½
+    // æŠ½è±¡å·¥å‚æ¨¡å¼
     AbstractFactory::AbstractFactoryPatternDemo::test();
 
-    // µ¥ÀıÄ£Ê½
+    // å•ä¾‹æ¨¡å¼
     Singleton::SingletonPatternDemo::test();
 
-    // ½¨ÔìÕßÄ£Ê½
+    // å»ºé€ è€…æ¨¡å¼
     Builder::BuilderPatternDemo::test();
 
-    // Ô­ĞÍÄ£Ê½
+    // åŸå‹æ¨¡å¼
     Prototype::PrototypePatternDemo::test();
 
-    // ÊÊÅäÆ÷Ä£Ê½
+    // é€‚é…å™¨æ¨¡å¼
     Adapter::test();
 
-    // ÇÅ½ÓÄ£Ê½
+    // æ¡¥æ¥æ¨¡å¼
     Bridge::test();
 
-    // ¹ıÂËÆ÷Ä£Ê½
+    // è¿‡æ»¤å™¨æ¨¡å¼
     Filter::CriteriaPatternDemo::test();
 
-    // ×éºÏÄ£Ê½
+    // ç»„åˆæ¨¡å¼
     Composite::test();
 
-    // ×°ÊÎÕßÄ£Ê½
+    // è£…é¥°è€…æ¨¡å¼
     Decorator::test();
 
-    // Íâ¹ÛÄ£Ê½
+    // å¤–è§‚æ¨¡å¼
     Facade::test();
 
-    // ´úÀíÄ£Ê½
+    // ä»£ç†æ¨¡å¼
     Proxy::test();
 
-    // ÈÎÎñÁ´Ä£Ê½
+    // ä»»åŠ¡é“¾æ¨¡å¼
     Chain::test();
 
-    // ÃüÁîÄ£Ê½
+    // å‘½ä»¤æ¨¡å¼
     Command::test();
 
-    // ½âÊÍÆ÷Ä£Ê½
+    // è§£é‡Šå™¨æ¨¡å¼
     Interpreter::test();
 
-    // µü´úÆ÷Ä£Ê½
+    // è¿­ä»£å™¨æ¨¡å¼
     Iterator::IteratorPatternDemo::test();
 
-    // ÖĞ½éÄ£Ê½
+    // ä¸­ä»‹æ¨¡å¼
     Mediator::test();
 
-    // ±¸ÍüÂ¼Ä£Ê½
+    // å¤‡å¿˜å½•æ¨¡å¼
     Memento::test();
 
-    // ¹Û²ìÕßÄ£Ê½
+    // è§‚å¯Ÿè€…æ¨¡å¼
     Observer::test();
 
-    // ×´Ì¬Ä£Ê½
+    // çŠ¶æ€æ¨¡å¼
     State::StatePatternDemo::test();
     state::test();
 
-    // ¿Õ¶ÔÏóÄ£ĞÍ
+    // ç©ºå¯¹è±¡æ¨¡å‹
     NullObject::NullObjectPatternDemo::test();
 
-    // ²ßÂÔÄ£Ê½
+    // ç­–ç•¥æ¨¡å¼
     Strategy::test();
 
-    // Ä£°åÄ£Ê½
+    // æ¨¡æ¿æ¨¡å¼
     Template::TemplatePatternDemo::test();
 
-    // ·ÃÎÊÕßÄ£Ê½
+    // è®¿é—®è€…æ¨¡å¼
     Visitor::test();
 
     maze::test();

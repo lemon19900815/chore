@@ -1,4 +1,4 @@
-#include "session_manager.h"
+ï»¿#include "session_manager.h"
 
 SessionManager::SessionManager()
 {
@@ -8,14 +8,14 @@ SessionManager::~SessionManager()
 {
 }
 
-// ×¢²áÒµÎñÂß¼­²ã»Øµ÷
+// æ³¨å†Œä¸šåŠ¡é€»è¾‘å±‚å›è°ƒ
 void SessionManager::registerProc(HandleProc on_connection, HandleProc on_close)
 {
   on_connection_ = on_connection;
   on_close_ = on_close;
 }
 
-// ¼¤»îsession£»ÒÆ³ı¹ıÆÚµÄsession
+// æ¿€æ´»sessionï¼›ç§»é™¤è¿‡æœŸçš„session
 void SessionManager::update(bool active)
 {
   if (active)
@@ -34,7 +34,7 @@ void SessionManager::update(bool active)
   tickActiveSessions();
 }
 
-// tickÓĞĞ§µÄ»á»°
+// tickæœ‰æ•ˆçš„ä¼šè¯
 void SessionManager::tickActiveSessions()
 {
   std::list<int> need_close_sessions;
@@ -51,21 +51,21 @@ void SessionManager::tickActiveSessions()
   detachCloseSessions(need_close_sessions);
 }
 
-// ĞÂµÄÁ¬½Ó
+// æ–°çš„è¿æ¥
 void SessionManager::onAcceptSession(Session::PTR session)
 {
   std::lock_guard<std::mutex> guard(accept_mutex_);
   accepted_sessions_[session->fd()] = session;
 }
 
-// Á¬½Ó¹Ø±Õ
+// è¿æ¥å…³é—­
 void SessionManager::onCloseSession(Session::PTR session)
 {
   std::lock_guard<std::mutex> guard(close_mutex_);
   close_sessions_.push_back(session->fd());
 }
 
-// ½»»»accept»á»°
+// äº¤æ¢acceptä¼šè¯
 void SessionManager::swapAcceptSessions(std::list<Session::WPTR>& swap_accept_seesion)
 {
   std::lock_guard<std::mutex> guard(accept_mutex_);
@@ -78,7 +78,7 @@ void SessionManager::swapAcceptSessions(std::list<Session::WPTR>& swap_accept_se
   accepted_sessions_.clear();
 }
 
-// Ó¦ÓÃ²ã¼¤»î»á»°
+// åº”ç”¨å±‚æ¿€æ´»ä¼šè¯
 void SessionManager::activeAcceptSessions(std::list<Session::WPTR>& swap_accept_seesion)
 {
   for (auto& info : swap_accept_seesion)
@@ -89,14 +89,14 @@ void SessionManager::activeAcceptSessions(std::list<Session::WPTR>& swap_accept_
   }
 }
 
-// ½»»»close»á»°
+// äº¤æ¢closeä¼šè¯
 void SessionManager::swapCloseSessions(std::list<int>& swap_close_seesion)
 {
   std::lock_guard<std::mutex> guard(close_mutex_);
   swap_close_seesion = std::move(close_sessions_);
 }
 
-// Ó¦ÓÃ²ã¹Ø±Õ»á»°
+// åº”ç”¨å±‚å…³é—­ä¼šè¯
 void SessionManager::detachCloseSessions(std::list<int>& swap_close_seesion)
 {
   for (auto& id : swap_close_seesion)
@@ -105,14 +105,14 @@ void SessionManager::detachCloseSessions(std::list<int>& swap_close_seesion)
   }
 }
 
-// Ìí¼Ósessionµ½»î¶¯¶ÓÁĞÖĞ
+// æ·»åŠ sessionåˆ°æ´»åŠ¨é˜Ÿåˆ—ä¸­
 bool SessionManager::addSession(Session::PTR session)
 {
   auto ret = active_sessions_.insert(std::make_pair(session->fd(), session));
   return ret.second;
 }
 
-// ´Ó»î¶¯»á»°ÖĞÒÆ³ısession
+// ä»æ´»åŠ¨ä¼šè¯ä¸­ç§»é™¤session
 bool SessionManager::detachSession(int id)
 {
   return active_sessions_.erase(id) > 0;

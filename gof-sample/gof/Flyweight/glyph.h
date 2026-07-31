@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <unordered_map>
 #include <memory>
@@ -11,7 +11,7 @@ class Window;
 class GlyphContext;
 class Font;
 
-// flyweightģʽһ������ģʽһ��ʹ��
+// flyweight模式一般和组合模式一起使用
 class Glyph {
 public:
     virtual ~Glyph() { }
@@ -25,7 +25,7 @@ public:
     virtual bool IsDone(GlyphContext&);
     virtual Glyph::Ptr Current(GlyphContext&);
 
-    // Compositeģʽ�ӿ�
+    // Composite模式接口
     virtual void Insert(Glyph::Ptr, GlyphContext&);
     virtual void Remove(GlyphContext&);
 };

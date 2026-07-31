@@ -1,4 +1,4 @@
-// Copyright (c), lemon19900815.
+ï»¿// Copyright (c), lemon19900815.
 // All rights reserved.
 // mini dump file generator for Windows, 
 // use virtual studio to open the *.dmp file, locate the dump position.
@@ -79,7 +79,7 @@ long __stdcall crashHandler(_EXCEPTION_POINTERS* excp) {
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
-// ·ÀÖ¹CRT£¨C runtime£©º¯Êı±¨´í¿ÉÄÜ²¶×½²»µ½
+// é˜²æ­¢CRTï¼ˆC runtimeï¼‰å‡½æ•°æŠ¥é”™å¯èƒ½æ•æ‰ä¸åˆ°
 void disableSetUnhandledExceptionFilter()
 {
     auto lib = LoadLibrary(L"kernel32.dll");
@@ -107,7 +107,7 @@ void disableSetUnhandledExceptionFilter()
     }
 }
 
-// windowsÆ½Ì¨å´»úÉú³Émini.dmpÎÄ¼ş£¬Ê¹ÓÃvs´ò¿ªdmpÎÄ¼ş¸¨Öú¶¨Î»ÎÊÌâ
+// windowså¹³å°å®•æœºç”Ÿæˆmini.dmpæ–‡ä»¶ï¼Œä½¿ç”¨vsæ‰“å¼€dmpæ–‡ä»¶è¾…åŠ©å®šä½é—®é¢˜
 class DumpHelper {
 public:
     DumpHelper() {
@@ -119,7 +119,7 @@ public:
     }
 };
 #else
-// ÆäËûÆ½Ì¨£¨Èç£ºLinux£©¿ÉÒÔÍ¨¹ıgdbÀ´¶¨Î»
+// å…¶ä»–å¹³å°ï¼ˆå¦‚ï¼šLinuxï¼‰å¯ä»¥é€šè¿‡gdbæ¥å®šä½
 class DumpHelper {
 public:
     DumpHelper() {

@@ -1,4 +1,4 @@
-#include "session.h"
+ï»¿#include "session.h"
 
 #include "timehelp.h"
 #include "ringbuffer/ringbuffer.h"
@@ -70,7 +70,7 @@ int Session::onWrite()
   return 0;
 }
 
-// ½âÎö·â°ü
+// è§£æå°åŒ…
 void Session::dispatch()
 {
   char buff[8192];

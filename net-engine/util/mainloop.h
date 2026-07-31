@@ -1,4 +1,4 @@
-#ifndef __MAIN_LOOP_INC_H__
+ï»¿#ifndef __MAIN_LOOP_INC_H__
 #define __MAIN_LOOP_INC_H__
 
 #include "timehelp.h"
@@ -11,10 +11,10 @@ extern util::Time gtime;
 
 namespace util
 {
-  // Ä¬ÈÏÎª10ms
+  // é»˜è®¤ä¸º10ms
   constexpr uint64_t kDefaultFrameTime = 10;
 
-  // Ö÷Ñ­»·¿ØÖÆ£º¿ØÖÆÖ´ĞĞ¼ä¸ôµÄÊ±¼ä
+  // ä¸»å¾ªç¯æ§åˆ¶ï¼šæ§åˆ¶æ‰§è¡Œé—´éš”çš„æ—¶é—´
   class MainLoop
   {
   public:
@@ -29,7 +29,7 @@ namespace util
       assert(schema);
       schema_ = schema;
 
-      // Ã¿Ö¡µ÷¶ÈÊ±¼ä
+      // æ¯å¸§è°ƒåº¦æ—¶é—´
       frame_time_ = std::max<uint64_t>(frame_time, kDefaultFrameTime);
     }
 
@@ -49,14 +49,14 @@ namespace util
     }
 
   private:
-    // Ã¿Ö¡ÔËĞĞ¼ä¸ôÊ±¼ä
+    // æ¯å¸§è¿è¡Œé—´éš”æ—¶é—´
     uint64_t frame_time_;
-    // Ö÷Ñ­»·¿ØÖÆÆ÷
+    // ä¸»å¾ªç¯æ§åˆ¶å™¨
     std::function<void()> schema_;
 
-    // ·şÎñÆ÷ÔËĞĞµÄÖ¡Êı
+    // æœåŠ¡å™¨è¿è¡Œçš„å¸§æ•°
     uint64_t frame_count_;
-    // ÉÏ´Î¼ÇÂ¼µÄÊ±¼ä
+    // ä¸Šæ¬¡è®°å½•çš„æ—¶é—´
     uint64_t last_ms_;
   };
 }

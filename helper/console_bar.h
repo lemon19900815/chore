@@ -1,14 +1,14 @@
-#pragma once
+ï»¿#pragma once
 
 #include <cstdint>
 #include <cstring>
 #include <string>
 #include <iostream>
 
-// ½ø¶ÈÌõ³¤¶È
+// è¿›åº¦æ¡é•¿åº¦
 #define BAR_LEN 100
 
-// ¿ØÖÆÌ¨½ø¶ÈÌõ
+// æ§åˆ¶å°è¿›åº¦æ¡
 class ConsoleBar final {
 public:
     explicit ConsoleBar(std::string name, int32_t total) {

@@ -1,4 +1,4 @@
-#ifndef __SESSION_INC_H__
+ï»¿#ifndef __SESSION_INC_H__
 #define __SESSION_INC_H__
 
 class RingBuffer;
@@ -39,7 +39,7 @@ public:
   */
   int onWrite();
 
-  // ½âÎö·â°ü
+  // è§£æå°åŒ…
   void dispatch();
 
 public:

@@ -1,4 +1,4 @@
-#ifndef __EQUIPMENT_INC_H__
+ï»¿#ifndef __EQUIPMENT_INC_H__
 #define __EQUIPMENT_INC_H__
 
 #include "../stdafx.h"
@@ -18,11 +18,11 @@ public:
     virtual ~Equipment() { }
     CLASS_PTR(Equipment);
 
-    // Õâ¸ö½Ó¿ÚÎªÁËÆÁ±ÎCompositeÀàµÄ½Ó¿ÚAdd&Remove;¼õÉÙ¹«¹²ÀàÖĞ²»ĞèÒªµÄ½Ó¿Ú
+    // è¿™ä¸ªæ¥å£ä¸ºäº†å±è”½Compositeç±»çš„æ¥å£Add&Remove;å‡å°‘å…¬å…±ç±»ä¸­ä¸éœ€è¦çš„æ¥å£
     virtual std::shared_ptr<CompositeEquipment> GetComposite() { return nullptr; }
     virtual std::string toString() { return name_; }
 
-    // ÆäËû¹«¹²Àà½Ó¿Ú¶¨Òå...
+    // å…¶ä»–å…¬å…±ç±»æ¥å£å®šä¹‰...
 
 private:
     std::string name_;

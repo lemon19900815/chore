@@ -1,4 +1,4 @@
-#ifndef __Command_Order_Inc_H__
+﻿#ifndef __Command_Order_Inc_H__
 #define __Command_Order_Inc_H__
 
 #include "../stdafx.h"
@@ -30,7 +30,7 @@ private:
   int32_t amount_;
 };
 
-// command�ӿ�
+// command接口
 class Order {
 public:
   virtual ~Order() { }

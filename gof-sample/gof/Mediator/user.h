@@ -1,4 +1,4 @@
-#ifndef __Mediator_User_Inc_H__
+﻿#ifndef __Mediator_User_Inc_H__
 #define __Mediator_User_Inc_H__
 
 #include "../stdafx.h"
@@ -75,8 +75,8 @@ public:
   FontDialogDirector() { }
   ~FontDialogDirector() { }
 
-  // �ú����ĸ��Ӷ���Ի�������Ӷ����ӣ���ʵ���У���ĶԻ��򲢲��ܻ�ӭ����ԭ����
-  // �෽��ģ�����һ����Ҫ��ԭ�����н��ߵĸ����Կ��ܻ������ģʽ��������������ĺô�
+  // 该函数的复杂度随对话框的增加而增加；在实践中，大的对话框并不受欢迎，其原因是
+  // 多方面的，其中一个重要的原因是中介者的复杂性可能会抵消该模式在其他方面逮来的好处
   void WidgetChanged(Widget::Ptr widget) override {
     if (widget == ok_) {
       // TODO: ...

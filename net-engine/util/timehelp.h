@@ -1,4 +1,4 @@
-#ifndef __UTIL_INC_H__
+ï»¿#ifndef __UTIL_INC_H__
 #define __UTIL_INC_H__
 
 #include "common.h"
@@ -16,19 +16,19 @@ namespace util
       time_ms_ = ms();
     }
 
-    // µ±Ç°ÏµÍ³µÄºÁÃëÊ±¼ä
+    // å½“å‰ç³»ç»Ÿçš„æ¯«ç§’æ—¶é—´
     static uint64_t ms() {
       auto tp = std::chrono::system_clock::now();
       auto dur = tp.time_since_epoch();
       return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
     }
 
-    // µ±Ç°ÏµÍ³µÄÊ±¼ä´Á
+    // å½“å‰ç³»ç»Ÿçš„æ—¶é—´æˆ³
     static uint64_t now() {
       return ms() / 1000;
     }
 
-    // Ö¸¶¨Ê±¼äµÄ×Ö·û´®ÃèÊö
+    // æŒ‡å®šæ—¶é—´çš„å­—ç¬¦ä¸²æè¿°
     static std::string asString(time_t unix_time) {
       auto ptm = std::localtime(&unix_time);
 

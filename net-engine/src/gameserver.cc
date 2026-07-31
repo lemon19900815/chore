@@ -1,4 +1,4 @@
-#include "gameserver.h"
+ï»¿#include "gameserver.h"
 
 #include "timehelp.h"
 #include "mainloop.h"
@@ -9,10 +9,10 @@
 util::Time gtime;
 util::MainLoop gloop;
 
-// Ã¿Ö¡Ê±¼ä¶¨Òå
+// æ¯å¸§æ—¶é—´å®šä¹‰
 constexpr uint32_t kPerFrameTime = 20;
 
-// ÅäÖÃĞÅÏ¢
+// é…ç½®ä¿¡æ¯
 util::JsonObj gconf;
 
 RunApplication(GameServer);
@@ -47,7 +47,7 @@ bool GameServer::startup(int argc, char* argv[])
 
   stoped_ = false;
 
-  // ×¢²áÖ÷Ñ­»·µ÷¶È·½Ê½ºÍ¼ä¸ô
+  // æ³¨å†Œä¸»å¾ªç¯è°ƒåº¦æ–¹å¼å’Œé—´éš”
   gloop.registerSchema(
     kPerFrameTime, std::bind(&GameServer::schema, this));
 
@@ -70,7 +70,7 @@ void GameServer::run()
   {
     gtime.update();
 
-    // Ö÷Ñ­»·
+    // ä¸»å¾ªç¯
     gloop.update();
 
     // sleep for 10 ms

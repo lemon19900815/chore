@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../stdafx.h"
 
@@ -30,7 +30,7 @@ public:
     tcp_state_ = tcp_state;
   }
 
-  // ÊµÏÖÔÚtcp×´Ì¬¶¨ÒåÖ®ºó
+  // å®ç°åœ¨tcpçŠ¶æ€å®šä¹‰ä¹‹å
   void Update();
 
 private:
