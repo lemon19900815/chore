@@ -791,6 +791,16 @@ $env:HTTP_PROXY = "http://127.0.0.1:7890"
 gh auth login
 ```
 
+cmd下设置到一起：
+```cmd
+set HTTP_PROXY=http://127.0.0.1:7890
+set HTTPS_PROXY=http://127.0.0.1:7890
+set ALL_PROXY=socks5://127.0.0.1:7890
+
+# 或者
+set "HTTP_PROXY=http://127.0.0.1:7890"
+```
+
 交互展示：
 ```powershell
 PS C:\Users\buerjia\Desktop> gh auth login
