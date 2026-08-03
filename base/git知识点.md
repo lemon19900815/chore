@@ -831,3 +831,9 @@ github-issue页面展示：
 ![](img/git知识点-3.png)
 
 总结：可以利用github的issue做方案、问题跟踪等。
+
+commit message携带 Closes 标签，推送到主分支时，会关闭关联的issue：
+![](img/git知识点-4.png)
+
+github关闭issue：
+![](img/git知识点-5.png)
