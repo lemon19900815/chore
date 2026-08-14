@@ -837,3 +837,23 @@ commit message携带 Closes 标签，推送到主分支时，会关闭关联的i
 
 github关闭issue：
 ![](img/git知识点-5.png)
+
+## 19. git status
+
+`-C`：在执行 Git 命令之前，先切换到指定目录
+```bash
+git -C d:\workspace\components status --porcelain
+```
+
+等价于：
+```bash
+cd d:\workspace\components
+git status
+```
+
+好处是：
+- 不需要改变当前命令行目录
+- 脚本中非常常用
+- 可以同时操作多个仓库
+
+`--porcelain`：输出稳定格式，方便脚本解析。
