@@ -313,6 +313,19 @@ git add <文件>
 git restore --staged <文件>
 ```
 
+如果本地因为 `某些原因(通常是拉取中途失败，本地已存在某些文件)` 导致拉取远端代码出现以下错误：
+```
+error: The following untracked working tree files would be overwritten by merge:
+```
+
+这时可以通过硬重置和远端对齐的方式处理该问题（需确认本地没有修改）：
+```bash
+git reset --hard origin/dev
+```
+如果本地 `untracked files` 是自己不需要的，还可以使用 `git clean` 清除。
+
+**注意：** 通常当前工程下还存在一些未提交的文件，需要慎重使用 `git clean`。
+
 ## 10. git clean
 
 git clean清理未跟踪的文件，并且删除后不会进入回收站，需要**慎用**。

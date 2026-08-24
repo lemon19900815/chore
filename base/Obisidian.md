@@ -22,3 +22,7 @@ Obisidian+github：作为私人好用的笔记软件。
 
 然后安装 `VSCode Editor` 插件，并且在 `文件扩展名` 新增自定义扩展名。修改后记得需要重启！！！否则扩展名不会生效。
 ![](img/Obisidian-20260625.png)
+
+## 2.4 不重复显示标题
+关闭 `页面内标题` 选项，否则这个标题只会出现在obsidian中，在其他md工具或者github就不能显示出来。
+![](img/Obisidian-20260627.png)
