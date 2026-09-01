@@ -783,10 +783,12 @@ S1
 ```bash
 git update-index --skip-worktree src/.clangd
 ```
-如果出现对文件进行了修改，则需要使用以下方式进行恢复：
+
+如果需要对文件修改之后让git再进入管理空间，则需要使用以下方式进行恢复：
 ```bash
 git update-index --no-skip-worktree src/.clangd
 ```
+
 恢复之后把当前文件暂存/重置：
 ```bash
 # 暂存

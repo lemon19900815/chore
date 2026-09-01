@@ -59,4 +59,26 @@ clangd：智能提示，跳转等
 
 }
 ```
-- 
+
+## 4. vscode调试cpp
+vscode调试cpp时，调试控制台通常都是蓝色，不能看到cmd控制台打印的日志颜色，可以添加console，让调试日志输出到控制台。
+ `launch.json`：
+```json
+{
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cppvsdbg",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/build_windows/bin/x64/Debug",
+            "console": "integratedTerminal"
+        }
+    ]
+}
+```
