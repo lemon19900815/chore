@@ -226,13 +226,13 @@ mosquitto.conf配置中新增：
 listener 8883 0.0.0.0
 
 # CA 证书（用来验证客户端）
-#cafile D:/MACCURA/5002/mosquitto/ca.crt
+#cafile D:/mosquitto/ca.crt
 
 # 服务器证书
-certfile D:/MACCURA/5002/mosquitto/server.crt
+certfile D:/mosquitto/server.crt
 
 # 服务器私钥
-keyfile D:/MACCURA/5002/mosquitto/server.key
+keyfile D:/mosquitto/server.key
 
 # 不验证客户端证书
 require_certificate false

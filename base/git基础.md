@@ -799,24 +799,38 @@ git checkout -- src/.clangd
 
 ## 18. gh 命令行用法
 
-登录（设置代理再登录）：
+**环境变量设置：**
+
+`powershell`
 ```powershell
+# 设置当前进程的环境变量
 $env:HTTPS_PROXY = "http://127.0.0.1:7890"
 $env:HTTP_PROXY = "http://127.0.0.1:7890"
-gh auth login
+
+# 取消当前进程的环境变量
+$env:HTTPS_PROXY = $null
+$env:HTTP_PROXY = $null
+
+------------------------------------------------------------------------------------------
+
+# ps1 设置持久环境变量（管理员权限）
+[Environment]::SetEnvironmentVariable("HTTP_PROXY", "http://127.0.0.1:7890", "User")
+# 取消环境变量
+[Environment]::SetEnvironmentVariable("HTTP_PROXY", $null, "User")
 ```
 
-cmd下设置到一起：
-```cmd
+`cmd/bat`（持久化 `setx`）
+```bash
+# 设置当前进程的环境变量
 set HTTP_PROXY=http://127.0.0.1:7890
 set HTTPS_PROXY=http://127.0.0.1:7890
 set ALL_PROXY=socks5://127.0.0.1:7890
 
-# 或者
-set "HTTP_PROXY=http://127.0.0.1:7890"
+# 取消当前进程的环境变量
+set HTTP_PROXY ""
 ```
 
-交互展示：
+交互展示（gh一般需要通过proxy才能访问，需先设置）：
 ```powershell
 PS C:\Users\buerjia\Desktop> gh auth login
 ? Where do you use GitHub? GitHub.com
@@ -832,7 +846,7 @@ Press Enter to open https://github.com/login/device in your browser...
 ✓ Authentication complete.
 - gh config set -h github.com git_protocol ssh
 ✓ Configured git protocol
-✓ SSH key already existed on your GitHub account: C:\Users\maccura\.ssh\id_rsa.pub
+✓ SSH key already existed on your GitHub account: C:\Users\buerjia\.ssh\id_rsa.pub
 ✓ Logged in as lemon19900815
 ```
 
@@ -872,3 +886,50 @@ git status
 - 可以同时操作多个仓库
 
 `--porcelain`：输出稳定格式，方便脚本解析。
+
+## 20. git worktree
+
+`git worktree` 是 Git 用来**同时维护多个工作目录**的功能。它们共享同一个 Git 仓库和对象数据库，但每个 worktree 可以检出不同的分支/提交。
+
+比如你正在 `main` 上开发，又临时需要修 `hotfix`，不用 `stash` 或来回切分支：
+
+```bash
+# 在当前仓库旁边创建一个新工作目录，并检出 hotfix
+git worktree add ../project-hotfix hotfix
+
+# 查看所有 worktree
+git worktree list
+```
+
+目录大概会变成：
+
+```
+project/           → main
+project-hotfix/    → hotfix
+```
+
+用完后删除：
+
+```bash
+git worktree remove ../project-hotfix
+```
+
+如果还没有目标分支，可以创建新分支并建立 worktree：
+
+```bash
+git worktree add -b feature/login ../project-login main
+```
+
+这相当于：**从 `main` 创建 `feature/login`，并直接在 `../project-login` 中检出它。**
+
+于是两个终端可以同时工作：
+
+```bash
+cd project
+# 继续 main 的开发
+
+cd ../project-hotfix
+# 修 hotfix
+```
+
+worktree修复完成之后，代码需要进入到主分支，处理方式为rebase或者mege。
