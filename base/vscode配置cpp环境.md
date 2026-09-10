@@ -82,3 +82,9 @@ vscode调试cpp时，调试控制台通常都是蓝色，不能看到cmd控制�
     ]
 }
 ```
+
+## 5. 踩坑
+注意：如果安装 `微信开发者工具`，需要修改系统环境变量，否则造成在vscode中配置工程就会失败。
+核心原因是这个工具写了一个环境变量：`C:\Program Files (x86)\Tencent\微信web开发者工具\dll`，中文在vscode加载的环境变量里会导致解析失败，造成vscode启动cmake失败。
+
+![](img/vscode配置cpp环境.png)

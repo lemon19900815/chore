@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <type_traits>
 #include <typeindex>
@@ -170,6 +170,18 @@ template<typename... Args, typename F, size_t... Idx>
 void for_each(const std::tuple<Args...>& tp, std::index_sequence<Idx...>, F&& f)
 {
     (std::forward<F>(f)(std::get<Idx>(tp), std::integral_constant<size_t, Idx> {}),...);
+}
+
+// tuple,c++17
+// example:
+// auto tp = std::make_tuple(1, std::string("abcd"), 3.14f);
+// for_each_tuple([](auto&& v){
+//     std::cout << v << ","
+// }, tp);
+template<typename F, typename... Args>
+void for_each_tuple (F&& f, std::tuple<Args...>& tp)
+{
+    std::apply([&f](Args&... args) { (f(args), ...); }, tp);
 }
 
 // for each tuple on c++11, std::index_sequence for c++14
