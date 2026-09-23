@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="从 PPT模板A.pptx 提取的迈克生物品牌底图、配色与字体的本地 HTML 效果预览。">
+  <title>PPT 模板 A · HTML 效果预览</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script src="assets/backgrounds.js" defer></script>
+  <script src="preview.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-identity"><span class="identity-mark" aria-hidden="true"></span><h1>模板 A <span>/ HTML 视觉预览</span></h1></div>
+    <div class="header-actions">
+      <span class="preview-badge">原始底图 · 本地预览</span>
+      <button id="toggle-fullscreen" class="fullscreen-button" type="button" aria-pressed="false" aria-keyshortcuts="f" aria-describedby="fullscreen-message">全屏演示</button>
+      <button id="export-image" class="export-button" type="button" aria-describedby="export-status">导出当前页 PNG</button>
+    </div>
+  </header>
+
+  <main class="preview">
+    <div class="stage-heading">
+      <p><span class="eyebrow">LAYOUT PREVIEW</span><span id="layout-name">封面 · 品牌印象</span></p>
+      <span class="canvas-format">16 : 9<span class="format-divider">/</span>等比缩放</span>
+    </div>
+
+    <div class="stage">
+      <section class="slide cover" id="cover" role="tabpanel" aria-labelledby="tab-cover" tabindex="0" data-name="封面 · 品牌印象" data-note="原始封面底图 / 浅蓝灰折纸曲面 / 左对齐标题 / 保留右下品牌标识">
+        <img class="slide-background" data-background="cover" alt="迈克生物封面底图：浅蓝灰折纸曲面、白色圆角留白与右下方 maccura 标识" fetchpriority="high">
+        <div class="cover-title"><h2>让表达，更精准</h2></div>
+        <p class="cover-subtitle">品牌视觉 · HTML 模板</p>
+        <p class="cover-meta">PPT 模板 A<span class="text-divider">|</span>风格应用预览</p>
+      </section>
+
+      <section class="slide catalogue" id="catalogue" role="tabpanel" aria-labelledby="tab-catalogue" tabindex="0" data-name="目录 · 清晰导览" data-note="原始目录底图 / 左侧固定目录标题 / 右侧编号导航 / 蓝灰色层级" hidden>
+        <img class="slide-background" data-background="catalogue" alt="迈克生物目录底图：左上目录字样、浅蓝灰几何背景与左下版权信息">
+        <div class="catalogue-items">
+          <a href="?slide=chapter" data-slide="chapter"><span class="catalogue-number">01</span><span>品牌视觉语言<small>风格、配色与字体</small></span></a>
+          <a href="?slide=content" data-slide="content"><span class="catalogue-number">02</span><span>内容排版示意<small>层级、布局与留白</small></span></a>
+          <a href="?slide=style-guide" data-slide="style-guide"><span class="catalogue-number">03</span><span>模板使用规范<small>视觉元素的统一应用</small></span></a>
+        </div>
+      </section>
+
+      <section class="slide chapter" id="chapter" role="tabpanel" aria-labelledby="tab-chapter" tabindex="0" data-name="章节 · 内容转场" data-note="原始章节底图 / 左侧标题与轻字重副标题 / 右侧章节编号 / 底部品牌区" hidden>
+        <img class="slide-background" data-background="chapter" alt="迈克生物章节底图：浅蓝灰曲面、右上 CHAPTER 字样与底部白色品牌区域">
+        <div class="chapter-title"><h2>品牌视觉语言</h2><p>以简洁，传递专业</p></div>
+        <span class="chapter-number" aria-label="第一章">01</span>
+      </section>
+
+      <section class="slide content" id="content" role="tabpanel" aria-labelledby="tab-content" tabindex="0" data-name="内容 · 双栏排版" data-note="原始内容底图 / 36 pt 标题与 18 pt 正文比例 / 双栏留白 / 顶部品牌区域不遮挡" hidden>
+        <img class="slide-background" data-background="content" alt="迈克生物内容页底图：白色背景、左上版权信息与右上 maccura 标识">
+        <h2 class="page-title">让复杂信息，一目了然</h2>
+        <div class="content-columns">
+          <div class="content-copy">
+            <h3>一个页面，一个重点</h3>
+            <p>以清晰的标题建立阅读顺序，<br>用简洁的文字呈现核心信息。</p>
+            <h3>克制用色，让内容成为主角</h3>
+            <p>亮蓝用于强调，深灰承载正文。<br>保留充分留白，让表达更从容。</p>
+            <p class="content-footnote">此页为 HTML 排版示例，可替换为实际内容。</p>
+          </div>
+          <div class="content-visual">
+            <span class="visual-label">一致的视觉，清晰的表达</span>
+            <div class="ratio-display">16<span>:</span>9</div>
+            <p>统一画幅 · 等比呈现</p>
+            <div class="visual-rule" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="visual-caption"><span>品牌蓝</span><span>文字灰</span><span>留白</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide style-guide" id="style-guide" role="tabpanel" aria-labelledby="tab-style-guide" tabindex="0" data-name="规范 · 配色与字体" data-note="源自模板第 6、7、11、12 页 / 仅使用微软雅黑与 Light / 内页内容避让顶部品牌区" hidden>
+        <img class="slide-background" data-background="content" alt="迈克生物白色内容页底图，顶部保留版权信息和品牌标识">
+        <h2 class="page-title">从模板中提取的视觉规范</h2>
+        <div class="guide-content">
+          <div class="guide-palette">
+            <div><span class="palette-chip brand"></span><strong>品牌亮蓝</strong><code>#00B4FF</code></div>
+            <div><span class="palette-chip ink"></span><strong>正文深灰</strong><code>#474D59</code></div>
+            <div><span class="palette-chip muted"></span><strong>辅助中灰</strong><code>#AAAFB4</code></div>
+            <div><span class="palette-chip soft"></span><strong>背景浅灰</strong><code>#EBEEF2</code></div>
+            <div><span class="palette-chip paper"></span><strong>纯白留白</strong><code>#FFFFFF</code></div>
+          </div>
+          <div class="guide-type">
+            <div class="type-specimen"><p>微软雅黑<span>Microsoft YaHei</span></p><p class="light-type">微软雅黑 Light<span>轻盈的副标题</span></p></div>
+            <dl class="type-scale"><div><dt>封面 / 章节标题</dt><dd>48 <small>pt</small></dd></div><div><dt>内页标题</dt><dd>36 <small>pt</small></dd></div><div><dt>内页正文</dt><dd>18 <small>pt</small></dd></div></dl>
+          </div>
+          <p class="guide-note">字号为 PPT 原始规范，HTML 随画幅等比缩放；底图内的品牌标识、版权与位置保持不变。</p>
+        </div>
+      </section>
+
+      <section class="slide closing" id="closing" role="tabpanel" aria-labelledby="tab-closing" tabindex="0" data-name="封底 · 品牌收束" data-note="原始封底底图 / 内嵌「我·即精准」品牌口号 / 保留 logo、版权及曲面纹理" hidden>
+        <img class="slide-background" data-background="closing" alt="迈克生物封底：我·即精准，I’M ACCURATE 品牌口号，浅蓝灰曲面及右下 maccura 标识">
+        <p class="closing-meta">感谢观看<span class="text-divider">|</span>让每一次表达，都保持一致</p>
+      </section>
+    </div>
+
+    <div class="fullscreen-toolbar" aria-label="全屏演示操作">
+      <div class="fullscreen-actions">
+        <button id="fullscreen-previous" type="button">上一页</button>
+        <span id="fullscreen-counter" aria-live="polite" aria-atomic="true">01 / 06</span>
+        <button id="fullscreen-next" type="button">下一页</button>
+        <button id="fullscreen-export" type="button" aria-describedby="fullscreen-status">导出当前页 PNG</button>
+        <button id="exit-fullscreen" type="button">退出全屏</button>
+      </div>
+      <p id="fullscreen-status" role="status" aria-live="polite">← → 翻页 · Home / End 首尾页 · F 或 Esc 退出全屏</p>
+    </div>
+
+    <div class="slide-caption"><p id="layout-note">原始封面底图 / 浅蓝灰折纸曲面 / 左对齐标题 / 保留右下品牌标识</p><span id="page-counter" aria-live="polite" aria-atomic="true">01 / 06</span></div>
+
+    <nav class="slide-navigation" aria-label="预览页面导航">
+      <button class="arrow-button" id="previous" type="button" aria-label="上一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <div class="layout-tabs" role="tablist" aria-label="模板版式">
+        <button id="tab-cover" type="button" role="tab" aria-selected="true" aria-controls="cover" data-slide="cover"><span>01</span>封面</button>
+        <button id="tab-catalogue" type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-slide="catalogue" tabindex="-1"><span>02</span>目录</button>
+        <button id="tab-chapter" type="button" role="tab" aria-selected="false" aria-controls="chapter" data-slide="chapter" tabindex="-1"><span>03</span>章节</button>
+        <button id="tab-content" type="button" role="tab" aria-selected="false" aria-controls="content" data-slide="content" tabindex="-1"><span>04</span>内容</button>
+        <button id="tab-style-guide" type="button" role="tab" aria-selected="false" aria-controls="style-guide" data-slide="style-guide" tabindex="-1"><span>05</span>规范</button>
+        <button id="tab-closing" type="button" role="tab" aria-selected="false" aria-controls="closing" data-slide="closing" tabindex="-1"><span>06</span>封底</button>
+      </div>
+      <button class="arrow-button" id="next" type="button" aria-label="下一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+    </nav>
+
+    <div class="export-help">
+      <p id="export-status" role="status" aria-live="polite">支持离线导出 1920 × 1080 PNG，仅包含幻灯片；直接双击 HTML 即可，无需联网或启动服务。</p>
+      <p>PPT 使用 16:9 宽屏，选择「设置背景格式 → 图片或纹理填充」插入导出图片即可原样铺满；图片内文字不可单独编辑。</p>
+      <p id="fullscreen-message" role="status" aria-live="polite">点击「全屏演示」或按 F 进入全屏，按 Esc 退出。</p>
+    </div>
+    <footer class="preview-footer"><p>提取自 <span>PPT模板A.pptx</span><span class="footer-divider">·</span>底图原样保留，文字使用 HTML 排版</p><p><kbd>←</kbd><kbd>→</kbd> 翻页 · <kbd>F</kbd> 全屏</p></footer>
+    <noscript><p class="noscript-note">请启用 JavaScript 加载内嵌底图、切换版式、全屏演示及导出图片。</p></noscript>
+  </main>
+</body>
+</html>
