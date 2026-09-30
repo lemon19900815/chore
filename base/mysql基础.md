@@ -524,4 +524,125 @@ mysqldump --login-path=local57 mydb > backup.sql
 
 通常情况下，这个文件在你第一次使用 `mysql_config_editor` 命令时自动创建。
 
-- 
+
+## 6. Common Table Expression（公共表表达式）
+
+CTE 就是给一段临时查询结果起一个名字，然后在后面的 SQL 中像使用临时表一样使用它。
+### 6.1 基本语法
+
+```
+WITH cte_name AS (
+    SELECT *
+    FROM users
+    WHERE age >= 18
+)
+SELECT *
+FROM cte_name;
+```
+
+这里：
+
+```
+WITH cte_name AS (...)
+```
+
+定义了一个 CTE，后面的：
+
+```
+SELECT * FROM cte_name
+```
+
+就可以使用它。
+### 6.2 为什么需要 CTE？
+
+比如原来的 SQL 很复杂：
+
+```
+SELECT *
+FROM (
+    SELECT user_id, COUNT(*) AS order_count
+    FROM orders
+    GROUP BY user_id
+) t
+WHERE t.order_count > 10;
+```
+
+可以改成：
+
+```
+WITH user_orders AS (
+    SELECT user_id, COUNT(*) AS order_count
+    FROM orders
+    GROUP BY user_id
+)
+SELECT *
+FROM user_orders
+WHERE order_count > 10;
+```
+
+**可读性会好很多。**
+
+### 6.3 CTE 可以有多个
+
+```
+WITH
+user_orders AS (
+    SELECT user_id, COUNT(*) AS order_count
+    FROM orders
+    GROUP BY user_id
+),
+active_users AS (
+    SELECT id, name
+    FROM users
+    WHERE status = 1
+)
+SELECT u.name, o.order_count
+FROM active_users u
+JOIN user_orders o ON u.id = o.user_id;
+```
+
+多个 CTE 之间用逗号分隔。
+### 6.4 CTE 最重要的一个用途：递归查询
+
+CTE 还支持 **Recursive CTE**，特别适合查询树形结构，例如：
+
+```
+公司
+├── 技术部
+│   ├── 后端组
+│   └── 前端组
+└── 销售部
+    ├── 华东区
+    └── 华南区
+```
+
+例如 MySQL 8：
+
+```
+WITH RECURSIVE org AS (
+    -- 第一层
+    SELECT id, name, parent_id, 0 AS level
+    FROM department
+    WHERE parent_id IS NULL
+
+    UNION ALL
+
+    -- 递归查询子节点
+    SELECT d.id, d.name, d.parent_id, o.level + 1
+    FROM department d
+    JOIN org o ON d.parent_id = o.id
+)
+SELECT *
+FROM org
+ORDER BY level;
+```
+
+这就是 CTE 非常强大的地方。
+
+### 6.5 CTE 和临时表的区别
+![](img/mysql基础.png)
+所以可以先把 CTE 理解成：
+
+> **“给一个子查询取名字，让复杂 SQL 可以分步骤写。”**
+
+如果你现在主要用的是 **MySQL 5.7/8.4**，需要特别注意：**MySQL 5.7 不支持 CTE，MySQL 8.0+ 才支持。**
