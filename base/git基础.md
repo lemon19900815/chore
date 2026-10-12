@@ -908,10 +908,17 @@ project/           → main
 project-hotfix/    → hotfix
 ```
 
-用完后删除：
+用完后删除（如果确定worktree不需要，并且submodule也不需要，直接使用 `--force` ）：
 
 ```bash
-git worktree remove ../project-hotfix
+git worktree remove [--force] ../project-hotfix
+```
+
+如果还出现失败的情况：fatal: working trees containing submodules cannot be moved or removed
+```
+; 删除worktree目录，然后在主仓库执行清理动作
+rm -rf ../project-hotfix
+git worktree prune
 ```
 
 如果还没有目标分支，可以创建新分支并建立 worktree：
